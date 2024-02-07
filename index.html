@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>A-Frame Dominoes</title>
+    <meta name="description" content="A-Frame Dominoes">
+    <script src="lib/aframe.min.js"></script>
+    <script src="lib/aframe-extras.min.js"></script>
+    <script src="lib/demo-controls.js"></script>
+    <script>
+        AFRAME.registerComponent('click-drag', {
+            init: function () {
+                this.el.addEventListener('mousedown', (e) => {
+                    // Activer le mode "drag"
+                    this.isDragging = true;
+                    this.el.addState('dragging');
+                });
+                window.addEventListener('mouseup', (e) => {
+                    // Désactiver le mode "drag"
+                    this.isDragging = false;
+                    this.el.removeState('dragging');
+                });
+                window.addEventListener('mousemove', (e) => {
+                    if (this.isDragging) {
+                        // Mettre à jour la position de l'objet ici
+                        // Cette partie nécessite une logique complexe pour calculer la position 3D basée sur le mouvement de la souris
+                        // et n'est pas directement fournie ici
+                    }
+                });
+            }
+        });
+    </script>
+
+</head>
+<body>
+<a-scene physics='gravity: -9.8' antialias='true'>
+
+    <!-- Player -->
+    <a-entity id="camera" camera look-controls wasd-controls position="0 2 2"></a-entity>
+    <a-entity demo-controls id="leftController" static-body="shape: sphere; sphereRadius: 0.02;"
+              vive-controls="hand: left" sphere-collider="objects: .throwable" grab></a-entity>
+    <a-entity demo-controls id="rightController" static-body="shape: sphere; sphereRadius: 0.03;"
+              vive-controls="hand: right" sphere-collider="objects: .throwable" grab></a-entity>
+    <a-entity cursor raycaster="far: 20; interval: 1000; objects: .clickable"></a-entity>
+    <a-entity position="0 1.25 0" id="domino-container">
+
+        <a-box id="table" static-body position="0 0 -1.5" width="3" height="0.1" depth="2" color="#3F51B5"></a-box>
+
+        <a-entity id="dominoes" position="1.4 0.18 -1" rotation="" scale="" visible="">
+            <a-box material="color:beige" geometry="primitive:box;width:0.05;height:0.3;depth:0.1" color="beige"
+                   width="0.15" height="0.3" depth="0.1"
+                   position="-0.25360440279915597 0.019963955734102035 -0.013157508908544946" class="throwable"
+                   quaternion="0.0004608213794955088 0.033289984954274245 -0.00011930730841447973 0.9994456214878158"
+                   velocity="" dynamic-body="" rotation="" scale="" visible="">
+
+            </a-box>
+
+        </a-entity>
+
+    </a-entity>
+
+    <!-- Ground -->
+    <!--      <a-plane static-body rotation="-90 0 0" position="0 0 0.6" width="2.45" height="2.1" color="#388E3C"></a-plane>-->
+
+    <!-- Sky -->
+    <a-sky color="#E0E0E0"></a-sky>
+</a-scene>
+</body>
+</html>
