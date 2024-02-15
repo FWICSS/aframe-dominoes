@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- Inclure les bibliothèques pour la physique et les interactions -->
+  <script src="//cdn.jsdelivr.net/npm/aframe-physics-system/dist/aframe-physics-system.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/aframe-extras/dist/aframe-extras.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/aframe-super-hands-component/dist/super-hands.min.js"></script>
+</head>
+<body>
+<a-scene physics="debug: true;">
+  <!-- Configuration du composant super-hands pour la saisie -->
+  <a-entity id="rig" position="0 1.6 0">
+    <a-camera look-controls-enabled="false"></a-camera>
+    <a-entity id="left-hand" super-hands></a-entity>
+    <a-entity id="right-hand" super-hands></a-entity>
+  </a-entity>
+
+  <!-- Groupe Domino avec un seul corps dynamique -->
+  <a-entity dynamic-body="shape: box" grabbable="constraintComponentName: lock">
+    <!-- Domino base -->
+    <a-box position="0 0.5 -3" rotation="0 0 0" color="#FFFFFF"
+           width="0.7" height="1.4" depth="0.2">
+    </a-box>
+
+    <!-- Ligne centrale -->
+    <a-box position="0 0.55 -2.9" rotation="0 0 0" color="#000000"
+           width="0.7" height="0.05" depth="0.1">
+    </a-box>
+
+    <!-- 6 points -->
+    <a-sphere position="-0.2 1.1 -2.9" radius="0.05" color="#000000"></a-sphere>
+    <a-sphere position="-0.2 0.9 -2.9" radius="0.05" color="#000000"></a-sphere>
+    <a-sphere position="-0.2 0.7 -2.9" radius="0.05" color="#000000"></a-sphere>
+    <a-sphere position="0.2 1.1 -2.9" radius="0.05" color="#000000"></a-sphere>
+    <a-sphere position="0.2 0.9 -2.9" radius="0.05" color="#000000"></a-sphere>
+    <a-sphere position="0.2 0.7 -2.9" radius="0.05" color="#000000"></a-sphere>
+
+    <!-- 1 point -->
+    <a-sphere position="0 0.3 -2.9" radius="0.05" color="#000000"></a-sphere>
+  </a-entity>
+
+  <!-- Sol -->
+  <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4"
+           color="#7BC8A4" static-body></a-plane>
+
+</a-scene>
+</body>
+</html>
