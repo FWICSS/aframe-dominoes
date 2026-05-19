@@ -5,7 +5,7 @@
     ":automergePatch"
   ],
 
-  "baseBranches": ["develop"],
+  "baseBranches": ["master"],
 
   "timezone": "America/Guadeloupe",
 
