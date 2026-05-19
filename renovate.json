@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":automergePatch"
+  ],
+
+  "baseBranches": ["develop"],
+
+  "timezone": "America/Guadeloupe",
+
+  "rangeStrategy": "bump",
+
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies"
+    },
+
+    {
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+
+    {
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
+    },
+
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}
