@@ -1,11 +1,13 @@
 {
   "extends": [
-    "config:base",
+    "config:recommended",
     ":dependencyDashboard",
     ":automergePatch"
   ],
 
-  "baseBranches": ["master"],
+  "baseBranchPatterns": [
+    "master"
+  ],
 
   "timezone": "America/Guadeloupe",
 
@@ -35,10 +37,12 @@
 
     {
 
-      "matchPackagePatterns": ["webpack", "budo", "aframe"],
-
-      "automerge": false
-
+      "automerge": false,
+      "matchPackageNames": [
+        "/webpack/",
+        "/budo/",
+        "/aframe/"
+      ]
     }
   ]
 }
