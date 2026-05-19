@@ -16,7 +16,7 @@ function genererDomino(num1, num2, posX, posY, posZ) {
     // Attributs pour l'interaction et la physique, inchangés
     domino.setAttribute('class', 'interactive');
     domino.setAttribute('grabbable', ''); // Rend le domino saisissable
-    domino.setAttribute('dynamic-body', 'shape: box; mass: 0'); // Ajoute une physique de forme boîte
+    domino.setAttribute('dynamic-body', 'shape: box'); // Ajoute une physique de forme boîte
     domino.setAttribute('position', `${posX} ${posY} ${posZ}`);
     domino.setAttribute('collision-filter', 'group: dominos; collidesWith: default,dominos,main');
 
