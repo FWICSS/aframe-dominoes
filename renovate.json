@@ -11,28 +11,34 @@
 
   "rangeStrategy": "bump",
 
-  "prHourlyLimit": 2,
-  "prConcurrentLimit": 5,
-
   "packageRules": [
     {
       "matchManagers": ["npm"],
       "groupName": "npm dependencies"
     },
 
-    {
+   {
+
       "matchUpdateTypes": ["patch"],
+
       "automerge": true
+
     },
 
     {
-      "matchUpdateTypes": ["minor"],
+
+      "matchPackageNames": ["node"],
+
       "automerge": false
+
     },
 
     {
-      "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
+
+      "matchPackagePatterns": ["webpack", "budo", "aframe"],
+
+      "automerge": false
+
     }
   ]
 }
