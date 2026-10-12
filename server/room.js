@@ -26,7 +26,7 @@ class Room {
     this.members = new Map();
     this.seats = [];
     this.hostId = null;
-    this.settings = { mode: 'draw', targetScore: 100 };
+    this.settings = { mode: 'draw', format: 'points', targetScore: 100 };
     this.game = null;
     this.botDelay = botDelay;
     this.afkTakeover = afkTakeover;
@@ -112,6 +112,7 @@ class Room {
           this.requireHost(id);
           this.requireLobby();
           if (msg.mode === 'draw' || msg.mode === 'block') this.settings.mode = msg.mode;
+          if (msg.format === 'points' || msg.format === 'competition') this.settings.format = msg.format;
           if ([50, 100, 150, 200].includes(msg.targetScore)) this.settings.targetScore = msg.targetScore;
           break;
         case 'addBot':

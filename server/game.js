@@ -8,10 +8,15 @@
 //
 // Une manche se termine quand un joueur pose son dernier domino (« domino ! »)
 // ou quand plus personne ne peut jouer (partie bloquée). Le gagnant de la manche
-// marque la somme des points restant dans les mains adverses. La partie se
-// termine quand un joueur atteint le score objectif.
+// marque la somme des points restant dans les mains adverses.
+//
+// Deux formats de partie :
+//  - "points"      : la partie se termine quand un joueur atteint le score objectif ;
+//  - "competition" : 12 manches (12 « poses ») ; la pose tourne à chaque manche
+//                    (3 poses chacun à 4 joueurs) et le plus haut total l'emporte.
 
 const MAX_PIP = 6;
+const COMPETITION_ROUNDS = 12;
 
 function createSet(max = MAX_PIP) {
   const tiles = [];
@@ -41,9 +46,12 @@ function handSize(mode, playerCount) {
 }
 
 class DominoGame {
-  constructor({ mode = 'draw', targetScore = 100, rng = Math.random } = {}) {
+  constructor({ mode = 'draw', format = 'points', targetScore = 100, rng = Math.random } = {}) {
     if (mode !== 'draw' && mode !== 'block') throw new Error(`mode inconnu : ${mode}`);
+    if (format !== 'points' && format !== 'competition') throw new Error(`format inconnu : ${format}`);
     this.mode = mode;
+    this.format = format;
+    this.totalRounds = format === 'competition' ? COMPETITION_ROUNDS : null;
     this.targetScore = targetScore;
     this.rng = rng;
     this.phase = 'idle';
@@ -74,7 +82,11 @@ class DominoGame {
     this.lastEvent = { type: 'round', round: this.round };
     this.phase = 'playing';
 
-    if (this.lastWinner != null) {
+    if (this.format === 'competition') {
+      // La pose tourne : chaque joueur ouvre à son tour, avec le domino de son choix.
+      this.turn = (this.round - 1) % this.seats.length;
+      this.openingTile = null;
+    } else if (this.lastWinner != null) {
       // Le gagnant de la manche précédente ouvre avec le domino de son choix.
       this.turn = this.lastWinner;
       this.openingTile = null;
@@ -209,9 +221,11 @@ class DominoGame {
       hands: this.seats.map((s) => s.hand.map((t) => t.id)),
     };
     const top = Math.max(...this.seats.map((s) => s.score));
-    if (top >= this.targetScore) {
+    const finished = this.format === 'competition' ? this.round >= this.totalRounds : top >= this.targetScore;
+    if (finished) {
       this.phase = 'gameOver';
-      this.winner = this.seats.findIndex((s) => s.score === top);
+      this.winners = this.seats.map((s, i) => (s.score === top ? i : -1)).filter((i) => i >= 0);
+      this.winner = this.winners[0];
     } else {
       this.phase = 'roundOver';
     }
@@ -229,6 +243,8 @@ class DominoGame {
     return {
       phase: this.phase,
       mode: this.mode,
+      format: this.format,
+      totalRounds: this.totalRounds,
       targetScore: this.targetScore,
       round: this.round,
       turn: this.turn,
@@ -245,8 +261,9 @@ class DominoGame {
       lastEvent: this.lastEvent,
       roundResult: this.roundResult,
       winner: this.phase === 'gameOver' ? this.winner : null,
+      winners: this.phase === 'gameOver' ? this.winners : null,
     };
   }
 }
 
-module.exports = { DominoGame, createSet, shuffle, pips, isDouble, handPips, handSize };
+module.exports = { COMPETITION_ROUNDS, DominoGame, createSet, shuffle, pips, isDouble, handPips, handSize };
