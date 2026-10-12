@@ -22,10 +22,12 @@
   var Y_AXIS = new THREE.Vector3(0, 1, 0);
   var Z_AXIS = new THREE.Vector3(0, 0, 1);
   var TOTAL_TILES = 28;
+  // Réactions rapides (même ordre que côté serveur : on n'échange que l'index).
+  var EMOTES = ['👍', '😂', 'Bien joué !', 'Oups !', 'À toi !', 'Hmm…'];
 
   // --- Matériaux et maillages des dominos ------------------------------------
 
-  var tileGeo = new THREE.BoxGeometry(TILE.W, TILE.T, TILE.L);
+  var tileGeo = W.roundedBox(TILE.W, TILE.T, TILE.L, 0.0028);
   var shared = null;
   var faceMats = {};
   var ghostMats = {};
@@ -143,6 +145,7 @@
       this.avatars = new Map();
       this.state = null;
       this.selected = null;
+      this.handOrder = [];
       this.myPos = undefined;
       this.rigHeight = 0;
       this.heightAxis = 0;
@@ -184,6 +187,17 @@
         if (av) av.setPose(m);
       });
       conn.on('error', function (m) { self.toast(m.message, true); });
+      conn.on('emote', function (m) {
+        var text = EMOTES[m.e];
+        if (!text) return;
+        if (m.id === (self.state && self.state.you)) {
+          self.toast('Vous : ' + text);
+          return;
+        }
+        var av = self.avatars.get(m.id);
+        if (av) av.showEmote(text);
+        SND.click();
+      });
       conn.on('status', function (status) {
         if (status === 'disconnected') self.toast('Connexion perdue, reconnexion…', true);
       });
@@ -403,8 +417,9 @@
             add('T:' + id, { kind: 'face', id: id, role: 'reveal', seat: sIdx, t: revealed(tp, x) });
           });
         } else if (sIdx === mySeat && g.hand) {
-          g.hand.forEach(function (id, k) {
-            var x = (k - (g.hand.length - 1) / 2) * HAND_SPACING;
+          var hand = self.orderedHand(g.hand);
+          hand.forEach(function (id, k) {
+            var x = (k - (hand.length - 1) / 2) * HAND_SPACING;
             var legal = myTurn && self.legalSides(id).length > 0;
             var selected = self.selected === id;
             add('T:' + id, {
@@ -700,14 +715,43 @@
       hand.proxy.updateMatrixWorld(true);
     },
 
+    // Ordre d'affichage de sa main, choisi par le joueur (les nouveaux dominos vont à droite).
+    orderedHand: function (hand) {
+      var set = new Set(hand);
+      var order = this.handOrder.filter(function (id) { return set.has(id); });
+      hand.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
+      this.handOrder = order;
+      return order;
+    },
+
+    sortHand: function () {
+      this.handOrder.sort(function (x, y) {
+        var a = x.split('-').map(Number);
+        var b = y.split('-').map(Number);
+        return a[0] - b[0] || a[1] - b[1];
+      });
+      if (this.state && this.state.game) this.renderTiles(this.state.game);
+    },
+
+    // Domino relâché près de sa main : on le range à l'emplacement visé.
+    reorderAt: function (id, pos) {
+      if (this.myPos == null) return false;
+      var local = pos.clone().applyQuaternion(W.seatQuaternion(this.myPos).invert());
+      if (Math.abs(local.z - C.HAND_Z) > 0.12 || local.y > C.TABLE_Y + 0.3) return false;
+      var order = this.handOrder.filter(function (h) { return h !== id; });
+      var idx = Math.round(local.x / HAND_SPACING + order.length / 2);
+      order.splice(Math.max(0, Math.min(order.length, idx)), 0, id);
+      this.handOrder = order;
+      return true;
+    },
+
     grabStart: function (hand, pos) {
-      if (!this.isMyTurn() || hand.held || this.holding()) return;
+      if (hand.held || this.holding()) return;
       var best = null;
       var bestD = GRAB_RADIUS;
       var self = this;
       this.tiles.forEach(function (entry) {
         if (entry.role !== 'hand' || entry.kind !== 'face') return;
-        if (!self.legalSides(entry.id).length) return;
         var d = entry.el.object3D.position.distanceTo(pos);
         if (d < bestD) { best = entry; bestD = d; }
       });
@@ -716,7 +760,7 @@
       var rel = new THREE.Matrix4().copy(hand.proxy.matrixWorld).invert().multiply(best.el.object3D.matrixWorld);
       best.tween = null;
       hand.held = { key: best.key, id: best.id, rel: rel };
-      this.selected = best.id;
+      this.selected = this.legalSides(best.id).length ? best.id : null;
       this.renderTiles(this.state.game);
       this.refreshHighlights();
       this.pulse(0.5, 40);
@@ -741,8 +785,9 @@
         this.playTile(held.id, target);
         this.pulse(0.8, 50);
       } else {
-        // Retour dans la main.
-        if (entry.base) this.moveTile(entry, entry.base, { force: true, arc: 0.03 });
+        // Retour dans la main (éventuellement à une nouvelle place).
+        this.reorderAt(held.id, pos);
+        entry.base = null;
         this.selected = null;
         this.renderTiles(g);
         this.refreshHighlights();
@@ -846,10 +891,18 @@
           if (g.canPass) list.push({ id: 'pass', label: 'Passer', color: '#8a5a2a' });
         }
         if (this.selected) list.push({ id: 'cancel', label: 'Annuler', color: '#7a4a3a' });
+        if (g.hand && g.hand.length > 1) list.push({ id: 'sort', label: 'Trier ma main', color: '#4a5a6a' });
       } else if (seated) {
         if (g.phase === 'roundOver') list.push({ id: 'nextRound', label: 'Manche suivante', color: '#2e7d4f' });
         if (g.phase === 'gameOver') list.push({ id: 'newGame', label: 'Nouvelle partie', color: '#2e7d4f' });
       }
+      if (this.emoteMenu) {
+        // Le pupitre affiche alors uniquement les réactions.
+        list = EMOTES.map(function (text, i) { return { id: 'emote:' + i, label: text, color: '#7a5a2a' }; });
+        list.push({ id: 'emotes', label: '← Retour', color: '#4a4a4a' });
+        return list;
+      }
+      list.push({ id: 'emotes', label: '💬 Réactions', color: '#7a5a2a' });
       if (this.voice) list.push({ id: 'mic', label: this.micOn ? '🎤 Micro : oui' : '🎤 Micro : non', color: this.micOn ? '#2e7d4f' : '#5a5a5a' });
       list.push({ id: 'up', label: '▲ Hauteur', color: '#4a4a4a' });
       list.push({ id: 'down', label: '▼ Hauteur', color: '#4a4a4a' });
@@ -883,6 +936,12 @@
       var s = this.state;
       var conn = this.conn;
       var self = this;
+      if (id.indexOf('emote:') === 0) {
+        this.sendEmote(Number(id.slice(6)));
+        this.emoteMenu = false;
+        this.renderButtons();
+        return;
+      }
       switch (id) {
         case 'start': conn.send({ t: 'start' }); break;
         case 'addBot': conn.send({ t: 'addBot' }); break;
@@ -897,6 +956,11 @@
         case 'stand': conn.send({ t: 'stand' }); break;
         case 'draw': conn.send({ t: 'draw' }); break;
         case 'pass': conn.send({ t: 'pass' }); break;
+        case 'sort': this.sortHand(); break;
+        case 'emotes':
+          this.emoteMenu = !this.emoteMenu;
+          this.renderButtons();
+          break;
         case 'cancel':
           this.selected = null;
           this.renderTiles(s.game);
@@ -911,6 +975,14 @@
         default:
       }
       self.pulse(0.3, 25);
+    },
+
+    sendEmote: function (index) {
+      if (this.conn) this.conn.send({ t: 'emote', e: index });
+    },
+
+    emotes: function () {
+      return EMOTES;
     },
 
     toggleMic: function () {

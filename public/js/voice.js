@@ -12,7 +12,12 @@
     this.micStream = null;
     this.onStream = function () {};
     this.onPeerGone = function () {};
+    this.iceServers = ICE_SERVERS;
     var self = this;
+    // Le serveur peut fournir un relais TURN (variable d'environnement ICE_SERVERS).
+    fetch('config.json').then(function (r) { return r.json(); }).then(function (cfg) {
+      if (cfg && Array.isArray(cfg.iceServers)) self.iceServers = cfg.iceServers;
+    }).catch(function () { /* STUN par défaut */ });
     conn.on('rtc', function (msg) { self.handleSignal(msg.from, msg.data); });
     conn.on('status', function (status) { if (status === 'connected') self.closeAll(); });
   }
@@ -63,7 +68,7 @@
 
   VoiceChat.prototype.createPeer = function (id) {
     var self = this;
-    var pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    var pc = new RTCPeerConnection({ iceServers: this.iceServers });
     var peer = { pc: pc, queue: [], remoteSet: false };
     this.peers.set(id, peer);
     pc.onicecandidate = function (e) {

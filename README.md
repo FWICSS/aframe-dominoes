@@ -29,8 +29,9 @@ ajoute éventuellement des bots, puis appuie sur **Démarrer**.
 Le WebXR n'est autorisé qu'en **HTTPS** (sauf sur `localhost`). Trois possibilités :
 
 1. **Héberger le jeu** sur un service qui fournit le HTTPS et les WebSockets (Render, Railway, Fly.io,
-   un VPS…). Un `Dockerfile` est fourni ; la variable `PORT` est respectée. C'est la solution idéale pour
-   jouer avec des amis à distance.
+   un VPS…). C'est la solution idéale pour jouer avec des amis à distance. Un `render.yaml` permet de
+   déployer en un clic sur Render (« New → Blueprint » avec ce dépôt) ; un `Dockerfile` est aussi fourni,
+   et la variable `PORT` est respectée.
 2. **Tunnel temporaire** depuis votre machine, par exemple `npx localtunnel --port 3000` ou
    `cloudflared tunnel --url http://localhost:3000`, puis ouvrez l'URL HTTPS obtenue dans le casque.
 3. **Réseau local avec certificat auto-signé** :
@@ -50,6 +51,10 @@ Ouvrez ensuite le lien dans le navigateur du casque, rejoignez la salle et appuy
 | **Mains (hand tracking)** | **Pincer** (pouce + index) un domino, le relâcher au-dessus d'un emplacement vert | Pincer un bouton du pupitre |
 | **Ordinateur** | Cliquer sur un domino en surbrillance (puis sur l'emplacement si deux sont possibles) | Glisser pour regarder ; boutons à droite de l'écran |
 | **Mobile** | Toucher un domino | Glisser pour regarder |
+
+En VR, vous pouvez aussi **réorganiser votre main** : attrapez un domino et relâchez-le à une autre
+place sur votre chevalet (ou utilisez le bouton « Trier ma main »). Les boutons **Réactions**
+(👍, 😂, « Bien joué ! »…) font apparaître une bulle au-dessus de votre avatar chez les autres joueurs.
 
 Les dominos jouables sont légèrement lumineux ; quand un domino peut aller des deux côtés, des
 emplacements « fantômes » verts apparaissent au bout de la chaîne.
@@ -89,8 +94,10 @@ npm test      # règles, disposition de la chaîne, serveur multijoueur
 | `public/js/world.js`, `textures.js` | Décor et textures générées (aucune image à télécharger) |
 | `public/js/avatars.js`, `voice.js`, `net.js` | Avatars, chat vocal WebRTC, connexion au serveur |
 
-Le chat vocal passe en pair-à-pair via des serveurs STUN publics ; derrière certains réseaux
-d'entreprise très restrictifs, il peut être nécessaire d'ajouter un serveur TURN dans `public/js/voice.js`.
+Le chat vocal passe en pair-à-pair via des serveurs STUN publics. Derrière certains réseaux
+(4G, entreprise…), il faut un relais TURN : indiquez-le au serveur avec la variable d'environnement
+`ICE_SERVERS`, par exemple
+`ICE_SERVERS='[{"urls":"turn:turn.exemple.fr:3478","username":"u","credential":"p"}]' npm start`.
 
 ## Licence
 

@@ -72,7 +72,7 @@
       palm.scale.set(1, 0.7, 1.25);
       palm.castShadow = true;
       hand.add(palm);
-      var held = new THREE.Mesh(new THREE.BoxGeometry(TILE.W, TILE.T, TILE.L), new THREE.MeshStandardMaterial({ map: TX.tileBack(), roughness: 0.35 }));
+      var held = new THREE.Mesh(W.roundedBox(TILE.W, TILE.T, TILE.L, 0.0028), new THREE.MeshStandardMaterial({ map: TX.tileBack(), roughness: 0.35 }));
       held.position.set(0, -0.02, -0.045);
       held.visible = false;
       hand.add(held);
@@ -87,6 +87,14 @@
     this.label = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.08), new THREE.MeshBasicMaterial({ map: this.labelTex, transparent: true, depthWrite: false }));
     this.root.add(this.label);
     this.labelKey = null;
+
+    // Bulle de réaction au-dessus de la tête.
+    this.bubbleCanvas = TX.canvas(512, 160);
+    this.bubbleTex = TX.toTexture(this.bubbleCanvas);
+    this.bubble = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.094), new THREE.MeshBasicMaterial({ map: this.bubbleTex, transparent: true, depthWrite: false }));
+    this.bubble.visible = false;
+    this.bubbleUntil = 0;
+    this.root.add(this.bubble);
 
     this.target = {
       head: { p: new THREE.Vector3(), q: new THREE.Quaternion() },
@@ -115,6 +123,15 @@
       radius: 40,
     });
     this.labelTex.needsUpdate = true;
+  };
+
+  Avatar.prototype.showEmote = function (text) {
+    TX.drawLabel(this.bubbleCanvas.getContext('2d'), 512, 160, {
+      text: text, fontSize: /^\p{Extended_Pictographic}/u.test(text) ? 96 : 60, background: 'rgba(255, 250, 235, 0.95)', color: '#2a2016', radius: 60,
+    });
+    this.bubbleTex.needsUpdate = true;
+    this.bubble.visible = true;
+    this.bubbleUntil = performance.now() + 2600;
   };
 
   Avatar.prototype.setTablePos = function (tablePos) {
@@ -185,6 +202,12 @@
     });
 
     this.label.position.copy(this.head.position).add(new THREE.Vector3(0, 0.2, 0));
+    if (this.bubble.visible) {
+      var left = this.bubbleUntil - performance.now();
+      this.bubble.visible = left > 0;
+      this.bubble.position.copy(this.label.position).add(new THREE.Vector3(0, 0.1 + Math.min(0.03, (2600 - left) / 8000), 0));
+      this.bubble.quaternion.copy(this.label.quaternion);
+    }
     var cam = this.root.parent && AFRAME.scenes[0] && AFRAME.scenes[0].camera;
     if (cam) {
       var camPos = new THREE.Vector3();
@@ -253,6 +276,7 @@
       if (o.geometry) o.geometry.dispose();
     });
     this.labelTex.dispose();
+    this.bubbleTex.dispose();
   };
 
   window.DominoAvatars = { Avatar: Avatar, colorFor: colorFor };
