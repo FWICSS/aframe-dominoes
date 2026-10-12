@@ -78,8 +78,9 @@ Le gagnant marque la somme des points restant dans les mains adverses.
 L'hôte choisit le **format** de la partie :
 
 - **Points** : le premier à atteindre l'objectif (50, 100, 150 ou 200 points) remporte la partie.
-- **Compétition** : la partie dure exactement **12 manches** (12 poses). La pose tourne : chaque joueur
-  ouvre une manche à son tour avec le domino de son choix, soit 3 poses chacun à 4 joueurs.
+- **Compétition** : la partie dure exactement **12 manches** (12 poses). La première pose revient au
+  joueur qui a le plus gros double (qu'il doit poser), puis la pose tourne : chaque joueur ouvre une
+  manche à son tour avec le domino de son choix, soit 3 poses chacun à 4 joueurs.
   Les points se comptent de la même façon ; après la 12ᵉ manche, le plus haut total l'emporte
   (égalité possible).
 

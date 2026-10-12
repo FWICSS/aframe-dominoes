@@ -12,8 +12,9 @@
 //
 // Deux formats de partie :
 //  - "points"      : la partie se termine quand un joueur atteint le score objectif ;
-//  - "competition" : 12 manches (12 « poses ») ; la pose tourne à chaque manche
-//                    (3 poses chacun à 4 joueurs) et le plus haut total l'emporte.
+//  - "competition" : 12 manches (12 « poses ») ; la première pose revient au plus
+//                    gros double, puis la pose tourne à chaque manche (3 poses
+//                    chacun à 4 joueurs) ; le plus haut total l'emporte.
 
 const MAX_PIP = 6;
 const COMPETITION_ROUNDS = 12;
@@ -82,9 +83,9 @@ class DominoGame {
     this.lastEvent = { type: 'round', round: this.round };
     this.phase = 'playing';
 
-    if (this.format === 'competition') {
-      // La pose tourne : chaque joueur ouvre à son tour, avec le domino de son choix.
-      this.turn = (this.round - 1) % this.seats.length;
+    if (this.format === 'competition' && this.round > 1) {
+      // La pose tourne à partir du premier ouvreur, avec le domino de son choix.
+      this.turn = (this.firstOpener + this.round - 1) % this.seats.length;
       this.openingTile = null;
     } else if (this.lastWinner != null) {
       // Le gagnant de la manche précédente ouvre avec le domino de son choix.
@@ -95,6 +96,7 @@ class DominoGame {
       const { seat, tile } = this.findOpener();
       this.turn = seat;
       this.openingTile = tile.id;
+      if (this.round === 1) this.firstOpener = seat;
     }
   }
 
