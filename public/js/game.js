@@ -849,6 +849,13 @@
           } else {
             lines.push({ text: title, bold: true, color: gold });
           }
+          // Détail du calcul : somme des points restant dans les mains adverses.
+          if (r.winner != null) {
+            var parts = [];
+            r.totals.forEach(function (t, i) { if (i !== r.winner) parts.push(names[i] + ' ' + t); });
+            lines.push({ text: 'Calcul : ' + parts.join(' + '), size: 42, color: '#cdbf9f' });
+            lines.push({ text: '= ' + r.points + ' pts pour ' + names[r.winner], size: 42, color: '#cdbf9f' });
+          }
         }
         g.seats.forEach(function (seat, i) {
           var extra = g.roundResult && g.phase !== 'playing' ? ' · reste ' + g.roundResult.totals[i] : ' · ' + seat.handCount + ' domino' + (seat.handCount > 1 ? 's' : '');
