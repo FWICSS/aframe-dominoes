@@ -203,3 +203,31 @@ test('des bots jouent des parties complètes sans coup illégal', () => {
     }
   }
 });
+
+test('partie en 100 points : le gagnant de chaque manche marque les points restant chez les autres', () => {
+  const g = new DominoGame({ mode: 'block', targetScore: 100 });
+  g.start([{ name: 'A' }, { name: 'B' }, { name: 'C' }]);
+  // Manche 1 : A pose son dernier domino ; B garde 6-6 + 5-4 (21), C garde 6-5 (11) → A marque 32.
+  g.turn = 0;
+  g.openingTile = null;
+  g.seats[0].hand = ['2-3'].map(tile);
+  g.seats[1].hand = ['6-6', '5-4'].map(tile);
+  g.seats[2].hand = ['6-5'].map(tile);
+  g.play(0, '2-3', 'right');
+  assert.equal(g.roundResult.points, 32);
+  assert.equal(g.seats[0].score, 32);
+  assert.equal(g.phase, 'roundOver', 'pas encore 100 points');
+  // Manche décisive : A arrive à 98 puis gagne encore 10 points → 108, fin de partie.
+  g.nextRound();
+  g.seats[0].score = 98;
+  g.turn = 0;
+  g.openingTile = null;
+  g.seats[0].hand = ['1-1'].map(tile);
+  g.seats[1].hand = ['4-6'].map(tile);
+  g.seats[2].hand = ['0-0'].map(tile);
+  g.play(0, '1-1', 'right');
+  assert.equal(g.roundResult.points, 10);
+  assert.equal(g.seats[0].score, 108);
+  assert.equal(g.phase, 'gameOver');
+  assert.equal(g.winner, 0);
+});
