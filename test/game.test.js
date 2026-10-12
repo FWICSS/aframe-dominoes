@@ -231,3 +231,43 @@ test('partie en 100 points : le gagnant de chaque manche marque les points resta
   assert.equal(g.phase, 'gameOver');
   assert.equal(g.winner, 0);
 });
+
+test('compétition : 12 manches, la pose tourne (3 poses chacun à 4 joueurs)', () => {
+  const g = new DominoGame({ mode: 'block', format: 'competition', rng: seeded(42) });
+  g.start([{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }]);
+  const poses = [0, 0, 0, 0];
+  let guard = 0;
+  while (g.phase !== 'gameOver') {
+    if (g.phase === 'roundOver') {
+      g.nextRound();
+      continue;
+    }
+    if (g.chain.length === 0) {
+      poses[g.turn] += 1;
+      assert.equal(g.turn, (g.round - 1) % 4, 'la pose tourne');
+      assert.equal(g.openingTile, null, 'l\'ouvreur choisit son domino');
+      assert.equal(g.legalMoves(g.turn).length, g.seats[g.turn].hand.length);
+    }
+    const action = chooseAction(g, g.turn);
+    if (action.type === 'play') g.play(g.turn, action.tileId, action.side);
+    else g.pass(g.turn);
+    assert.ok(++guard < 5000);
+  }
+  assert.equal(g.round, 12);
+  assert.deepEqual(poses, [3, 3, 3, 3]);
+  const top = Math.max(...g.seats.map((s) => s.score));
+  assert.deepEqual(g.winners, g.seats.map((s, i) => (s.score === top ? i : -1)).filter((i) => i >= 0));
+});
+
+test('compétition : la partie ne s\'arrête pas à 100 points avant la 12e manche', () => {
+  const g = new DominoGame({ mode: 'block', format: 'competition' });
+  g.start([{ name: 'A' }, { name: 'B' }]);
+  g.seats[0].score = 150;
+  g.turn = 0;
+  g.seats[0].hand = ['1-2'].map(tile);
+  g.seats[1].hand = ['6-6'].map(tile);
+  g.play(0, '1-2', 'right');
+  assert.equal(g.seats[0].score, 162);
+  assert.equal(g.phase, 'roundOver');
+  assert.equal(g.viewFor(0).totalRounds, 12);
+});

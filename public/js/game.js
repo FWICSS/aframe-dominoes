@@ -821,7 +821,8 @@
         var host = s.members.find(function (m) { return m.id === s.hostId; });
         lines.push({ text: 'Salle ' + s.room + ' — salle d\'attente', bold: true, size: 64, color: gold });
         lines.push('À table (' + seated.length + '/4) : ' + seated.map(function (m) { return m.name; }).join(', '));
-        lines.push('Mode : ' + (s.settings.mode === 'draw' ? 'avec pioche' : 'bloqué (sans pioche)') + ' · objectif ' + s.settings.targetScore + ' pts');
+        lines.push('Mode : ' + (s.settings.mode === 'draw' ? 'avec pioche' : 'bloqué (sans pioche)') + ' · ' +
+          (s.settings.format === 'competition' ? 'compétition en 12 manches, la pose tourne' : 'objectif ' + s.settings.targetScore + ' pts'));
         lines.push(s.you === s.hostId
           ? (seated.length < 2 ? 'Invitez des amis ou ajoutez un bot, puis « Démarrer ».' : 'Prêt ? Appuyez sur « Démarrer » →')
           : 'En attente de ' + (host ? host.name : 'l\'hôte') + ' pour démarrer…');
@@ -830,7 +831,8 @@
         var mySeat = s.mySeat;
         var names = g.seats.map(function (seat) { return seat.name; });
         if (g.phase === 'playing') {
-          lines.push({ text: 'Manche ' + g.round + ' · objectif ' + g.targetScore + ' pts' + (g.mode === 'draw' ? ' · pioche : ' + g.boneyardCount : ''), size: 42, color: '#cdbf9f' });
+          var progress = g.format === 'competition' ? 'Compétition · manche ' + g.round + '/' + g.totalRounds : 'Manche ' + g.round + ' · objectif ' + g.targetScore + ' pts';
+          lines.push({ text: progress + (g.mode === 'draw' ? ' · pioche : ' + g.boneyardCount : ''), size: 42, color: '#cdbf9f' });
           if (g.turn === mySeat) {
             var hint = g.canDraw ? 'Aucun domino ne se pose : piochez.' : g.canPass ? 'Aucun coup possible : passez.' :
               g.chain.length === 0 && g.openingTile ? 'Ouvrez avec le ' + g.openingTile.replace('-', '|') + '.' : 'Choisissez un domino en surbrillance.';
@@ -844,7 +846,11 @@
           var title = r.reason === 'domino' ? 'Domino ! ' + names[r.winner] + ' gagne la manche (+' + r.points + ')'
             : r.winner == null ? 'Partie bloquée : égalité, personne ne marque' : 'Partie bloquée : ' + names[r.winner] + ' gagne (+' + r.points + ')';
           if (g.phase === 'gameOver') {
-            lines.push({ text: '🏆 ' + names[g.winner] + ' remporte la partie !', bold: true, size: 64, color: gold });
+            var winners = (g.winners || [g.winner]).map(function (i) { return names[i]; });
+            lines.push({
+              text: winners.length > 1 ? '🏆 Égalité : ' + winners.join(' et ') + ' !' : '🏆 ' + winners[0] + ' remporte la partie !',
+              bold: true, size: 64, color: gold,
+            });
             lines.push({ text: title, size: 46 });
           } else {
             lines.push({ text: title, bold: true, color: gold });
@@ -888,7 +894,8 @@
           list.push({ id: 'addBot', label: '+ Bot', color: '#4a5a8a', enabled: seats.length < 4 });
           list.push({ id: 'removeBot', label: '− Bot', color: '#4a5a8a', enabled: s.members.some(function (m) { return m.isBot; }) });
           list.push({ id: 'mode', label: s.settings.mode === 'draw' ? 'Mode : pioche' : 'Mode : bloqué', color: '#6a4a8a' });
-          list.push({ id: 'target', label: 'Objectif : ' + s.settings.targetScore, color: '#6a4a8a' });
+          list.push({ id: 'format', label: s.settings.format === 'competition' ? 'Format : 12 manches' : 'Format : points', color: '#6a4a8a' });
+          if (s.settings.format !== 'competition') list.push({ id: 'target', label: 'Objectif : ' + s.settings.targetScore, color: '#6a4a8a' });
         }
         if (!seated && seats.length < 4) list.push({ id: 'sit', label: 'S\'asseoir', color: '#2e7d4f' });
         if (seated && s.you !== s.hostId) list.push({ id: 'stand', label: 'Se lever', color: '#7a4a3a' });
@@ -954,6 +961,7 @@
         case 'addBot': conn.send({ t: 'addBot' }); break;
         case 'removeBot': conn.send({ t: 'removeBot' }); break;
         case 'mode': conn.send({ t: 'settings', mode: s.settings.mode === 'draw' ? 'block' : 'draw' }); break;
+        case 'format': conn.send({ t: 'settings', format: s.settings.format === 'competition' ? 'points' : 'competition' }); break;
         case 'target': {
           var targets = [50, 100, 150, 200];
           conn.send({ t: 'settings', targetScore: targets[(targets.indexOf(s.settings.targetScore) + 1) % targets.length] });
