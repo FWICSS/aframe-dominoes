@@ -1,21 +1,28 @@
 {
   "name": "aframe-dominoes",
-  "description": "An A-Frame domino demo with the Vive",
-  "version": "0.1.0",
+  "description": "Dominos en réalité virtuelle (WebXR / A-Frame), multijoueur entre amis",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "budo --live --verbose --port 3000 --open",
-    "deploy": "ghpages",
-    "ghpages": "ghpages"
-  },
-  "devDependencies": {
-    "budo": "^11.8.4",
-    "ghpages": "0.0.10"
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test",
+    "cert": "openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 -subj /CN=dominos-vr",
+    "start:https": "SSL_KEY=key.pem SSL_CERT=cert.pem node server/index.js"
   },
   "keywords": [
     "aframe",
-    "aframe-example",
-    "aframe-scene",
-    "aframe-boilerplate"
-  ]
+    "webxr",
+    "vr",
+    "dominoes",
+    "multiplayer"
+  ],
+  "dependencies": {
+    "aframe": "1.7.1",
+    "ws": "^8.22.0"
+  },
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=20"
+  }
 }
