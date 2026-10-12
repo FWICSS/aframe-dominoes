@@ -30,6 +30,58 @@
     return mesh(new THREE.BoxGeometry(w, h, d), material, opts);
   }
 
+  // Pavé aux arêtes arrondies (comme un vrai domino) qui garde les 6 groupes de
+  // matériaux de BoxGeometry. Les sommets proches des bords sont resserrés puis
+  // projetés sur un quart de cercle de rayon r ; les UV des grandes faces sont
+  // recalculées pour que les points restent bien placés.
+  function roundedBox(w, h, d, r) {
+    var SEG = 8;
+    var g = new THREE.BoxGeometry(1, 1, 1, SEG, SEG, SEG);
+    var half = [w / 2, h / 2, d / 2];
+    // Répartition des lignes de la grille sur une demi-longueur : centre, puis serrées près du bord.
+    function remap(u, hl) {
+      var k = Math.round(Math.abs(u) * SEG);
+      var stops = [0, (hl - r) * 0.5, hl - r, hl - r * 0.3, hl];
+      return Math.sign(u) * stops[k];
+    }
+    var pos = g.attributes.position;
+    var nor = g.attributes.normal;
+    var uv = g.attributes.uv;
+    var v = new THREE.Vector3();
+    var c = new THREE.Vector3();
+    var n = new THREE.Vector3();
+    for (var i = 0; i < pos.count; i++) {
+      v.set(remap(pos.getX(i), half[0]), remap(pos.getY(i), half[1]), remap(pos.getZ(i), half[2]));
+      c.set(
+        THREE.MathUtils.clamp(v.x, -half[0] + r, half[0] - r),
+        THREE.MathUtils.clamp(v.y, -half[1] + r, half[1] - r),
+        THREE.MathUtils.clamp(v.z, -half[2] + r, half[2] - r)
+      );
+      n.subVectors(v, c);
+      if (n.lengthSq() > 1e-12) {
+        n.normalize();
+        v.copy(c).addScaledVector(n, r);
+        nor.setXYZ(i, n.x, n.y, n.z);
+      }
+      pos.setXYZ(i, v.x, v.y, v.z);
+    }
+    // UV planaires pour la face (+y) et le dos (-y) : groupes 2 et 3.
+    var index = g.index;
+    [2, 3].forEach(function (gi) {
+      var grp = g.groups[gi];
+      for (var j = grp.start; j < grp.start + grp.count; j++) {
+        var k = index.getX(j);
+        var x = (pos.getX(k) + half[0]) / w;
+        var z = (pos.getZ(k) + half[2]) / d;
+        uv.setXY(k, x, gi === 2 ? 1 - z : z);
+      }
+    });
+    pos.needsUpdate = nor.needsUpdate = uv.needsUpdate = true;
+    g.computeBoundingBox();
+    g.computeBoundingSphere();
+    return g;
+  }
+
   function seatQuaternion(tablePos) {
     return new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), (tablePos * Math.PI) / 2);
   }
@@ -246,5 +298,5 @@
     return { chairs: chairs, racks: racks, markers: markers, markerMat: markerMat };
   }
 
-  window.DominoWorld = { build: build, C: C, seatQuaternion: seatQuaternion };
+  window.DominoWorld = { build: build, C: C, seatQuaternion: seatQuaternion, roundedBox: roundedBox };
 })();

@@ -151,3 +151,20 @@ test('fin de partie puis retour en salle d\'attente, spectateur placé à table'
   await waitFor(() => alice.state.phase === 'lobby' && late.state.phase === 'lobby');
   assert.ok(late.state.members.find((m) => m.id === 'zoe-00000004').seat >= 0, 'le spectateur rejoint la table');
 });
+
+test('réactions relayées (limitées) et configuration ICE', async (t) => {
+  const port = await startServer(t);
+  const alice = await connect(port, 'EMO', 'Alice', 'alice-0005');
+  const bob = await connect(port, 'EMO', 'Bob', 'bob-00000005');
+  const got = [];
+  alice.ws.on('message', (raw) => { const m = JSON.parse(raw); if (m.t === 'emote') got.push(m); });
+  bob.send({ t: 'emote', e: 2 });
+  bob.send({ t: 'emote', e: 3 }); // trop rapproché : ignoré
+  bob.send({ t: 'emote', e: 99 }); // invalide : ignoré
+  await waitFor(() => got.length);
+  await new Promise((r) => setTimeout(r, 100));
+  assert.deepEqual(got.map((m) => [m.id, m.e]), [['bob-00000005', 2]]);
+
+  const cfg = await (await fetch(`http://localhost:${port}/config.json`)).json();
+  assert.ok(Array.isArray(cfg.iceServers) && cfg.iceServers.length > 0);
+});

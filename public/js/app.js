@@ -110,7 +110,7 @@
     bar.innerHTML = '';
     var game = document.getElementById('game').components['domino-game'];
     e.detail.forEach(function (b) {
-      if (b.id === 'mic' || b.id === 'up' || b.id === 'down') return;
+      if (b.id === 'mic' || b.id === 'up' || b.id === 'down' || b.id === 'emotes' || b.id.indexOf('emote:') === 0) return;
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.textContent = b.label;
@@ -143,6 +143,18 @@
     }
     window.addEventListener('domino-mic', function (e) { setMicLabel(e.detail); });
     $('hud-mic').hidden = !voice;
+
+    // Barre de réactions rapides.
+    var bar = $('emotes');
+    game.emotes().forEach(function (text, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'secondary';
+      btn.textContent = text;
+      btn.title = 'Envoyer « ' + text + ' » aux autres joueurs';
+      btn.addEventListener('click', function () { game.sendEmote(i); });
+      bar.appendChild(btn);
+    });
     $('hud-mic').addEventListener('click', function () { game.toggleMic(); });
 
     $('copy-link').addEventListener('click', function () {

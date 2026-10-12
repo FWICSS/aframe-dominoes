@@ -139,6 +139,8 @@ details li { margin: 8px 0; line-height: 1.4; }
 }
 
 #hud-status { font-size: 0.85rem; color: var(--muted); }
+#emotes { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+#emotes button { padding: 6px 10px; }
 #hud-status.connected { color: #9fe0b0; }
 
 #toast {

@@ -30,8 +30,27 @@ const MIME = {
 const ROOM_CODE = /^[A-Z0-9]{3,8}$/;
 const ROOM_IDLE_MS = 10 * 60 * 1000;
 
+// Serveurs STUN/TURN proposés aux navigateurs pour le chat vocal.
+// ICE_SERVERS='[{"urls":"turn:turn.exemple.fr:3478","username":"u","credential":"p"}]'
+function iceServers() {
+  const fallback = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+  if (!process.env.ICE_SERVERS) return fallback;
+  try {
+    const list = JSON.parse(process.env.ICE_SERVERS);
+    if (Array.isArray(list) && list.length) return list;
+  } catch {
+    console.warn('ICE_SERVERS invalide (JSON attendu), STUN par défaut utilisé');
+  }
+  return fallback;
+}
+
 function serveStatic(req, res) {
   const url = new URL(req.url, 'http://localhost');
+  if (url.pathname === '/config.json') {
+    const body = JSON.stringify({ iceServers: iceServers() });
+    res.writeHead(200, { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' }).end(body);
+    return;
+  }
   let file = VENDOR[url.pathname];
   if (!file) {
     const rel = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);

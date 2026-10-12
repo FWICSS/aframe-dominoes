@@ -7,6 +7,8 @@ const MAX_SEATS = 4;
 const BOT_DELAY_MS = 1400;
 const AFK_TAKEOVER_MS = 20000;
 const LOBBY_GRACE_MS = 30000;
+const EMOTE_COUNT = 6;
+const EMOTE_COOLDOWN_MS = 700;
 const BOT_NAMES = ['Robotine', 'Domibot', 'Bip-Bop', 'Mécano'];
 
 // Positions autour de la table (0 = sud, 1 = est, 2 = nord, 3 = ouest) selon le nombre de joueurs.
@@ -102,6 +104,9 @@ class Room {
           return;
         case 'rtc':
           this.relayRtc(id, msg);
+          return;
+        case 'emote':
+          this.relayEmote(member, msg);
           return;
         case 'settings':
           this.requireHost(id);
@@ -283,6 +288,19 @@ class Room {
     });
     for (const m of this.members.values()) {
       if (m.id !== id && m.socket && m.socket.readyState === 1) m.socket.send(out);
+    }
+  }
+
+  // Réactions rapides (👍, « Bien joué ! »…) : index dans la liste du client, limité en fréquence.
+  relayEmote(member, msg) {
+    const e = Number(msg.e);
+    if (!Number.isInteger(e) || e < 0 || e >= EMOTE_COUNT) return;
+    const now = Date.now();
+    if (now - (member.lastEmote || 0) < EMOTE_COOLDOWN_MS) return;
+    member.lastEmote = now;
+    const out = JSON.stringify({ t: 'emote', id: member.id, e });
+    for (const m of this.members.values()) {
+      if (m.socket && m.socket.readyState === 1) m.socket.send(out);
     }
   }
 
