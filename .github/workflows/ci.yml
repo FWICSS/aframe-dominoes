@@ -3,15 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - develop
+      - master
   pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run build
-        run: npm run build --if-present
+      - name: Syntax check
+        run: for f in server/*.js public/js/*.js; do node --check "$f"; done
 
-      - name: Run tests (if any)
-        run: npm test --if-present
+      - name: Run tests
+        run: npm test

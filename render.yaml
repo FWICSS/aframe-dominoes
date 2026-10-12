@@ -1,0 +1,13 @@
+# Déploiement en un clic sur Render (HTTPS + WebSockets inclus) :
+# https://render.com/deploy?repo=https://github.com/FWICSS/aframe-dominoes
+services:
+  - type: web
+    name: dominos-vr
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: ICE_SERVERS
+        sync: false
