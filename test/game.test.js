@@ -232,10 +232,14 @@ test('partie en 100 points : le gagnant de chaque manche marque les points resta
   assert.equal(g.winner, 0);
 });
 
-test('compétition : 12 manches, la pose tourne (3 poses chacun à 4 joueurs)', () => {
+test('compétition : 12 manches, première pose au plus gros double puis la pose tourne (3 chacun)', () => {
   const g = new DominoGame({ mode: 'block', format: 'competition', rng: seeded(42) });
   g.start([{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }]);
   const poses = [0, 0, 0, 0];
+  const first = g.turn;
+  const opener = g.findOpener();
+  assert.equal(first, opener.seat, 'la première pose revient au plus gros double');
+  assert.equal(g.openingTile, opener.tile.id);
   let guard = 0;
   while (g.phase !== 'gameOver') {
     if (g.phase === 'roundOver') {
@@ -244,9 +248,11 @@ test('compétition : 12 manches, la pose tourne (3 poses chacun à 4 joueurs)', 
     }
     if (g.chain.length === 0) {
       poses[g.turn] += 1;
-      assert.equal(g.turn, (g.round - 1) % 4, 'la pose tourne');
-      assert.equal(g.openingTile, null, 'l\'ouvreur choisit son domino');
-      assert.equal(g.legalMoves(g.turn).length, g.seats[g.turn].hand.length);
+      assert.equal(g.turn, (first + g.round - 1) % 4, 'la pose tourne');
+      if (g.round > 1) {
+        assert.equal(g.openingTile, null, 'l\'ouvreur choisit son domino');
+        assert.equal(g.legalMoves(g.turn).length, g.seats[g.turn].hand.length);
+      }
     }
     const action = chooseAction(g, g.turn);
     if (action.type === 'play') g.play(g.turn, action.tileId, action.side);
@@ -264,6 +270,7 @@ test('compétition : la partie ne s\'arrête pas à 100 points avant la 12e manc
   g.start([{ name: 'A' }, { name: 'B' }]);
   g.seats[0].score = 150;
   g.turn = 0;
+  g.openingTile = null;
   g.seats[0].hand = ['1-2'].map(tile);
   g.seats[1].hand = ['6-6'].map(tile);
   g.play(0, '1-2', 'right');
