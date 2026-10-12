@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Dominos VR — jouez entre amis</title>
+  <meta name="description" content="Parties de dominos en réalité virtuelle, à plusieurs, dans le navigateur.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="vendor/aframe.min.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/textures.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/avatars.js"></script>
+  <script src="js/game.js"></script>
+</head>
+<body>
+  <!-- Écran d'accueil -->
+  <div id="lobby" class="overlay">
+    <form id="join-form" class="card">
+      <h1>Dominos <span>VR</span></h1>
+      <p class="tagline">Une vraie table de dominos, en réalité virtuelle, avec vos amis.</p>
+
+      <label for="name">Votre prénom</label>
+      <input id="name" name="name" maxlength="16" autocomplete="nickname" placeholder="ex. Camille" required>
+
+      <label for="room">Code de la salle</label>
+      <div class="row">
+        <input id="room" name="room" maxlength="8" placeholder="ex. KQ7P" autocomplete="off" spellcheck="false">
+        <button type="button" id="new-room" class="secondary">Nouvelle salle</button>
+      </div>
+
+      <label class="check"><input type="checkbox" id="mic"> Activer le micro (chat vocal)</label>
+
+      <button type="submit" id="join" class="primary">Rejoindre la table</button>
+      <p id="join-error" class="error" role="alert"></p>
+
+      <details>
+        <summary>Comment jouer ?</summary>
+        <ul>
+          <li><b>Casque VR</b> (Quest, Pico…) : ouvrez cette page dans le navigateur du casque, rejoignez la salle puis appuyez sur <b>VR</b>.</li>
+          <li><b>Manettes</b> : visez un domino avec le laser et appuyez sur la gâchette, ou attrapez-le avec la <b>poignée</b> et posez-le sur un emplacement vert. Joystick haut/bas : hauteur de la table.</li>
+          <li><b>Mains</b> : pincez (pouce + index) un domino pour le prendre, relâchez au-dessus d'un emplacement vert. Pincez un bouton pour l'activer.</li>
+          <li><b>Ordinateur / mobile</b> : glissez pour regarder autour, cliquez pour jouer.</li>
+          <li><b>Règles</b> : posez un domino dont un côté correspond à un bout de la chaîne. Plus de coup ? Piochez (mode pioche) ou passez. Le premier à poser tous ses dominos gagne les points restants des adversaires. Si plus personne ne peut jouer, la main la plus légère l'emporte.</li>
+        </ul>
+      </details>
+    </form>
+  </div>
+
+  <!-- Bandeau en jeu (hors VR) -->
+  <div id="hud" hidden>
+    <span id="hud-room"></span>
+    <button type="button" id="copy-link" class="secondary">Copier le lien d'invitation</button>
+    <button type="button" id="hud-mic" class="secondary">🎤 Micro : non</button>
+    <span id="hud-status"></span>
+    <span id="emotes" aria-label="Réactions rapides"></span>
+  </div>
+  <div id="status" hidden aria-live="polite"></div>
+  <div id="actions" hidden></div>
+  <div id="toast" role="status"></div>
+
+  <a-scene
+    renderer="antialias: true; colorManagement: true; toneMapping: ACESFilmic; exposure: 1.05; foveationLevel: 1"
+    shadow="type: pcfsoft"
+    background="color: #1a1410"
+    webxr="optionalFeatures: hand-tracking, bounded-floor"
+    cursor="rayOrigin: mouse; fuse: false"
+    raycaster="objects: .clickable; far: 20"
+    loading-screen="dotsColor: #ffd166; backgroundColor: #1a1410"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-entity id="table-center" position="0 0.74 0"></a-entity>
+
+    <a-entity id="rig">
+      <a-entity id="camera" camera="near: 0.02; fov: 70" look-controls="pointerLockEnabled: false" position="0 1.22 0"></a-entity>
+      <a-entity id="leftHand" laser-controls="hand: left" raycaster="objects: .clickable; far: 4; lineColor: #ffd166; lineOpacity: 0.6"></a-entity>
+      <a-entity id="rightHand" laser-controls="hand: right" raycaster="objects: .clickable; far: 4; lineColor: #ffd166; lineOpacity: 0.6"></a-entity>
+      <a-entity id="leftHandTracking" hand-tracking-controls="hand: left; modelColor: #e8c39e"></a-entity>
+      <a-entity id="rightHandTracking" hand-tracking-controls="hand: right; modelColor: #e8c39e"></a-entity>
+    </a-entity>
+
+    <a-entity id="game" domino-game></a-entity>
+  </a-scene>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
