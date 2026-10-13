@@ -18,11 +18,11 @@
     "multiplayer"
   ],
   "dependencies": {
-    "aframe": "1.7.1",
+    "aframe": "1.8.0",
     "ws": "^8.22.0"
   },
   "main": "server/index.js",
   "engines": {
-    "node": ">=20"
+    "node": ">=20.20.2"
   }
 }
