@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 1.1.0 (2026-10-17)
+
+- Fournir un relais TURN au chat vocal avec des identifiants temporaires, pour que la voix passe aussi en 4G et sur les réseaux d'entreprise.
+- Durcir l'image Docker (utilisateur non privilégié, contrôle de santé) et documenter la mise en ligne sur Coolify dans DEPLOY.md.
+
 ## 1.0.1 (2026-10-17)
 
 - Passer à A-Frame 1.8.0, qui retire une dépendance vulnérable (alerte de sécurité modérée).
