@@ -3,6 +3,12 @@
 Une vraie partie de dominos en réalité virtuelle, à jouer **entre amis**, directement dans le navigateur
 (casque Meta Quest, Pico, PC VR… mais aussi ordinateur et mobile).
 
+![Une manche en cours contre trois bots, vue depuis sa place à la table](docs/captures/partie.jpg)
+
+| Accueil | Fin de manche |
+|---|---|
+| ![Écran d'accueil : prénom, code de salle, micro](docs/captures/accueil.jpg) | ![Fin de manche avec le détail du calcul des points](docs/captures/fin-de-manche.jpg) |
+
 - Salon chaleureux, table en bois avec tapis feutré, suspension, ombres, dominos à l'échelle réelle
   (faces gravées, rivet en laiton) posés sur un chevalet devant chaque joueur.
 - **Multijoueur en temps réel** (2 à 4 joueurs) : chacun voit les autres assis autour de la table,
