@@ -168,3 +168,19 @@ test('réactions relayées (limitées) et configuration ICE', async (t) => {
   const cfg = await (await fetch(`http://localhost:${port}/config.json`)).json();
   assert.ok(Array.isArray(cfg.iceServers) && cfg.iceServers.length > 0);
 });
+
+test('identifiants TURN temporaires signés avec TURN_SECRET', () => {
+  const crypto = require('crypto');
+  const { iceServers } = require('../server');
+  const now = 1_700_000_000_000;
+  const list = iceServers({ TURN_URLS: 'turn:turn.exemple.fr:3478,turn:turn.exemple.fr:3478?transport=tcp', TURN_SECRET: 's3cret' }, now);
+  const turn = list.find((s) => s.username);
+  assert.deepEqual(turn.urls, ['turn:turn.exemple.fr:3478', 'turn:turn.exemple.fr:3478?transport=tcp']);
+  const [expiry] = turn.username.split(':');
+  assert.equal(Number(expiry), now / 1000 + 24 * 3600);
+  assert.equal(turn.credential, crypto.createHmac('sha1', 's3cret').update(turn.username).digest('base64'));
+  assert.ok(list.some((s) => !s.username), 'les serveurs STUN restent proposés');
+
+  assert.equal(iceServers({}, now).some((s) => s.username), false, 'sans secret, pas de TURN');
+  assert.deepEqual(iceServers({ ICE_SERVERS: '[{"urls":"stun:x"}]', TURN_SECRET: 's', TURN_URLS: 'turn:y' }, now), [{ urls: 'stun:x' }]);
+});
