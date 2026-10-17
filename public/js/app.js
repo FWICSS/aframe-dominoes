@@ -91,18 +91,39 @@
     else scene.addEventListener('loaded', start);
   });
 
-  // Panneau d'état et boutons en HTML (hors VR), alimentés par le composant de jeu.
-  window.addEventListener('domino-panel', function (e) {
-    var box = $('status');
-    box.innerHTML = '';
-    e.detail.forEach(function (line, i) {
-      var style = typeof line === 'string' ? { text: line } : line;
-      var div = document.createElement('div');
-      div.textContent = style.text;
-      if (style.color) div.style.color = style.color;
-      if (style.bold || i === 0) div.style.fontWeight = '700';
-      box.appendChild(div);
+  // Classement et bandeau de tour en HTML (hors VR), alimentés par le composant de jeu.
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  window.addEventListener('domino-hud', function (e) {
+    var hud = e.detail;
+    var board = $('scoreboard');
+    board.innerHTML = '';
+    board.appendChild(el('h2', null, 'Classement'));
+    if (hud.progress) board.appendChild(el('p', 'progress', hud.progress));
+    var list = el('ol');
+    hud.scores.forEach(function (row) {
+      var li = el('li', (row.me ? 'me' : '') + (row.turn ? ' turn' : ''));
+      if (row.turn) li.setAttribute('aria-current', 'true');
+      li.appendChild(el('span', 'name', row.name + (row.me ? ' (vous)' : '')));
+      if (row.score != null) li.appendChild(el('span', 'score', row.score + ' pts'));
+      if (row.extra) li.appendChild(el('span', 'extra', row.extra));
+      list.appendChild(li);
     });
+    board.appendChild(list);
+    board.hidden = !hud.scores.length;
+
+    var banner = $('banner');
+    banner.innerHTML = '';
+    banner.className = hud.alert ? 'alert' : '';
+    if (hud.title) banner.appendChild(el('strong', null, hud.title));
+    if (hud.hint && hud.hint !== hud.title) banner.appendChild(el('span', null, hud.hint));
+    hud.details.forEach(function (d) { banner.appendChild(el('small', null, typeof d === 'string' ? d : d.text)); });
+    banner.hidden = !banner.childElementCount;
   });
 
   window.addEventListener('domino-buttons', function (e) {
@@ -127,7 +148,7 @@
 
   function connect(room, name, wantMic) {
     var game = document.getElementById('game').components['domino-game'];
-    $('status').hidden = false;
+    $('emotes').hidden = false;
     var conn = new window.DominoNet.Connection(room, name);
     var voice = window.RTCPeerConnection ? new window.DominoVoice.VoiceChat(conn) : null;
     game.connect(conn, voice);
