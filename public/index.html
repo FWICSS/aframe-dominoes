@@ -51,16 +51,18 @@
     </form>
   </div>
 
-  <!-- Bandeau en jeu (hors VR) -->
+  <!-- Interface en jeu (hors VR) : classement en haut à gauche, salle en haut à droite,
+       bandeau de tour en bas au centre, réactions en bas à gauche, actions en bas à droite. -->
+  <aside id="scoreboard" hidden aria-label="Classement"></aside>
   <div id="hud" hidden>
+    <span id="hud-status" aria-live="polite"></span>
     <span id="hud-room"></span>
     <button type="button" id="copy-link" class="secondary">Copier le lien d'invitation</button>
     <button type="button" id="hud-mic" class="secondary">🎤 Micro : non</button>
-    <span id="hud-status"></span>
-    <span id="emotes" aria-label="Réactions rapides"></span>
   </div>
-  <div id="status" hidden aria-live="polite"></div>
-  <div id="actions" hidden></div>
+  <div id="banner" hidden role="status" aria-live="polite"></div>
+  <div id="emotes" hidden role="group" aria-label="Réactions rapides"></div>
+  <div id="actions" hidden role="group" aria-label="Actions de jeu"></div>
   <div id="toast" role="status"></div>
 
   <a-scene
