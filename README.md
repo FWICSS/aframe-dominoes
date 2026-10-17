@@ -3,6 +3,8 @@
 Une vraie partie de dominos en réalité virtuelle, à jouer **entre amis**, directement dans le navigateur
 (casque Meta Quest, Pico, PC VR… mais aussi ordinateur et mobile).
 
+**[▶ Jouer maintenant sur dominos.tafrap.fr](https://dominos.tafrap.fr)**, puis envoyez le lien de la salle à vos amis.
+
 ![Une manche en cours contre trois bots, vue depuis sa place à la table](docs/captures/partie.jpg)
 
 | Accueil | Fin de manche |
