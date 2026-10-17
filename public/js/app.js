@@ -99,6 +99,9 @@
     return node;
   }
 
+  var bannerKey = null;
+  var bannerTitle = null;
+
   window.addEventListener('domino-hud', function (e) {
     var hud = e.detail;
     var board = $('scoreboard');
@@ -118,12 +121,74 @@
     board.hidden = !hud.scores.length;
 
     var banner = $('banner');
+    var key = JSON.stringify([hud.title, hud.hint, hud.details, hud.alert]);
+    if (key === bannerKey) return;
+    var flash = hud.title !== bannerTitle && /^(À vous|Vous êtes bloqué)/.test(hud.title || '');
+    bannerKey = key;
+    bannerTitle = hud.title;
     banner.innerHTML = '';
-    banner.className = hud.alert ? 'alert' : '';
+    banner.className = (hud.alert ? 'alert' : '') + (flash ? ' flash' : '');
     if (hud.title) banner.appendChild(el('strong', null, hud.title));
     if (hud.hint && hud.hint !== hud.title) banner.appendChild(el('span', null, hud.hint));
     hud.details.forEach(function (d) { banner.appendChild(el('small', null, typeof d === 'string' ? d : d.text)); });
     banner.hidden = !banner.childElementCount;
+  });
+
+  // Main du joueur en boutons : jouable au clavier, au lecteur d'écran et au doigt.
+  window.addEventListener('domino-hand', function (e) {
+    var d = e.detail;
+    var box = $('hand');
+    var game = document.getElementById('game').components['domino-game'];
+    var key = JSON.stringify(d);
+    if (key === box.dataset.key) return;
+    var hadFocus = box.contains(document.activeElement);
+    box.dataset.key = key;
+    box.innerHTML = '';
+    box.hidden = !d.tiles.length;
+    if (!d.tiles.length) return;
+
+    var pending = d.selected && d.tiles.find(function (t) { return t.id === d.selected && t.sides.length > 1; });
+    if (pending) {
+      // Domino jouable des deux côtés : on demande lequel.
+      box.appendChild(el('span', 'hand-label', 'Poser le ' + pending.label + ' :'));
+      ['left', 'right'].forEach(function (side, i) {
+        var btn = el('button', 'tile-side', side === 'left' ? '◀ à gauche, sur le ' + d.ends[0] : 'à droite, sur le ' + d.ends[1] + ' ▶');
+        btn.type = 'button';
+        btn.addEventListener('click', function () { game.playTile(pending.id, side); });
+        box.appendChild(btn);
+        if (i === 0) btn.focus();
+      });
+      var cancel = el('button', 'secondary', 'Annuler');
+      cancel.type = 'button';
+      cancel.addEventListener('click', function () { game.onButton('cancel'); });
+      box.appendChild(cancel);
+      return;
+    }
+
+    var firstLegal = null;
+    d.tiles.forEach(function (t) {
+      var legal = d.myTurn && t.sides.length > 0;
+      var btn = el('button', 'tile' + (legal ? ' legal' : ''));
+      btn.type = 'button';
+      var halves = t.label.split('|');
+      var face = el('span');
+      face.setAttribute('aria-hidden', 'true');
+      face.append(halves[0], el('i'), halves[1]);
+      btn.appendChild(face);
+      btn.setAttribute('aria-label', 'Domino ' + t.label.replace('|', ' et ') + (d.myTurn ? (legal ? ', jouable' : ', ne se pose pas') : ''));
+      if (d.myTurn && !legal) btn.setAttribute('aria-disabled', 'true');
+      btn.addEventListener('click', function () { game.onTileClick('T:' + t.id); });
+      box.appendChild(btn);
+      if (legal && !firstLegal) firstLegal = btn;
+    });
+    if (hadFocus && firstLegal) firstLegal.focus();
+  });
+
+  window.addEventListener('domino-announce', function (e) {
+    var box = $('announcer');
+    box.textContent = '';
+    // Léger délai : certains lecteurs d'écran ignorent un texte remplacé dans le même instant.
+    setTimeout(function () { box.textContent = e.detail; }, 50);
   });
 
   window.addEventListener('domino-buttons', function (e) {
@@ -137,10 +202,14 @@
       btn.textContent = b.label;
       btn.disabled = b.enabled === false;
       btn.style.background = b.color;
+      btn.dataset.id = b.id;
       btn.addEventListener('click', function () { game.onButton(b.id); });
       bar.appendChild(btn);
     });
     bar.hidden = !bar.childElementCount;
+    // Fin de manche : le focus clavier va sur le bouton qui permet de continuer.
+    var next = bar.querySelector('[data-id="nextRound"], [data-id="newGame"]');
+    if (next && document.activeElement && document.activeElement.closest('#lobby') === null) next.focus();
   });
 
   scene.addEventListener('enter-vr', function () { document.body.classList.add('in-vr'); });
@@ -148,7 +217,7 @@
 
   function connect(room, name, wantMic) {
     var game = document.getElementById('game').components['domino-game'];
-    $('emotes').hidden = false;
+    $('dock').hidden = false;
     var conn = new window.DominoNet.Connection(room, name);
     var voice = window.RTCPeerConnection ? new window.DominoVoice.VoiceChat(conn) : null;
     game.connect(conn, voice);
