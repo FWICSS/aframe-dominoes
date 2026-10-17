@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 1.3.0 (2026-10-17)
+
+- Jouer sans souris : la main s'affiche en boutons, utilisables au clavier, au lecteur d'écran et au doigt.
+- Entendre la partie avec un lecteur d'écran : coups des autres joueurs, bouts de la chaîne, début de tour et blocage sont annoncés.
+- Pouvoir zoomer la page sur mobile.
+- Repérer les dominos jouables à leur position relevée, et plus seulement à leur couleur.
+- Sur mobile, regrouper actions, bandeau et main en bas de l'écran pour dégager la table ; agrandir les petits textes.
+
 ## 1.2.0 (2026-10-17)
 
 - Passer automatiquement le tour d'un joueur bloqué après 2 secondes, en le prévenant par un son et un bandeau orange.
