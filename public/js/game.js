@@ -27,6 +27,19 @@
   // Joueur bloqué : le serveur passe son tour après ce délai (AUTO_PASS_MS dans server/room.js).
   var AUTO_PASS_S = 2;
 
+  // Texte lisible d'un domino ('6-4' → '6|4') et des bouts de la chaîne.
+  function tileLabel(id) { return id.replace('-', '|'); }
+  function chainEnds(chain) {
+    return chain && chain.length ? [chain[0].a, chain[chain.length - 1].b] : null;
+  }
+  function endsText(chain) {
+    var ends = chainEnds(chain);
+    return ends ? 'Bouts de la chaîne : ' + ends[0] + ' et ' + ends[1] + '.' : 'Chaîne vide.';
+  }
+  function announce(text) {
+    window.dispatchEvent(new CustomEvent('domino-announce', { detail: text }));
+  }
+
   // --- Matériaux et maillages des dominos ------------------------------------
 
   var tileGeo = W.roundedBox(TILE.W, TILE.T, TILE.L, 0.0028);
@@ -332,7 +345,12 @@
       this.lastEventKey = key;
       var names = g.seats.map(function (seat) { return seat.name; });
       if (isNew && ev) {
-        if (ev.type === 'draw') SND.slide();
+        var who = ev.seat === this.mySeat() ? 'Vous' : names[ev.seat];
+        if (ev.type === 'play') announce(who + (who === 'Vous' ? ' posez le ' : ' pose le ') + tileLabel(ev.tileId) + '. ' + endsText(g.chain));
+        if (ev.type === 'draw') {
+          SND.slide();
+          announce(who + (who === 'Vous' ? ' piochez.' : ' pioche.'));
+        }
         if (ev.type === 'pass') this.toast(names[ev.seat] + ' passe son tour');
         if (ev.type === 'roundEnd') {
           if (g.roundResult.winner === this.mySeat()) SND.win();
@@ -345,8 +363,15 @@
       var wasMyTurn = !!prevG && prevG.phase === 'playing' && prevG.turn === prev.mySeat && prevG.round === g.round;
       if (myTurnNow && !wasMyTurn) {
         // Bloqué : son d'alerte, le message est déjà dans le panneau et le bandeau.
-        if (g.canPass) SND.error();
-        else SND.yourTurn();
+        var playable = g.legal.map(function (m) { return m.tileId; }).filter(function (id, i, a) { return a.indexOf(id) === i; }).length;
+        if (g.canPass) {
+          SND.error();
+          announce('Vous êtes bloqué : aucun domino ne se pose, vous passez dans ' + AUTO_PASS_S + ' secondes.');
+        } else {
+          SND.yourTurn();
+          announce('À vous de jouer. ' + endsText(g.chain) + ' ' +
+            (g.canDraw ? 'Aucun domino ne se pose : piochez.' : playable + ' domino' + (playable > 1 ? 's' : '') + ' jouable' + (playable > 1 ? 's' : '') + '.'));
+        }
         this.pulse(0.4, 80);
       }
     },
@@ -428,7 +453,7 @@
             var selected = self.selected === id;
             add('T:' + id, {
               kind: 'face', id: id, role: 'hand', seat: sIdx, legal: legal, selected: selected,
-              clickable: true, t: standing(tp, x, selected ? 0.03 : 0),
+              clickable: true, t: standing(tp, x, selected ? 0.03 : legal ? 0.012 : 0),
             });
           });
         } else {
@@ -454,6 +479,19 @@
         });
       }
       return out;
+    },
+
+    // Main du joueur pour l'interface HTML (clavier, lecteur d'écran, mobile).
+    emitHand: function () {
+      var self = this;
+      var g = this.state && this.state.game;
+      var detail = { tiles: [], myTurn: this.isMyTurn(), selected: this.selected, ends: g ? chainEnds(g.chain) : null };
+      if (g && g.phase === 'playing' && g.hand) {
+        detail.tiles = this.orderedHand(g.hand).map(function (id) {
+          return { id: id, label: tileLabel(id), sides: self.legalSides(id), opening: g.chain.length === 0 };
+        });
+      }
+      window.dispatchEvent(new CustomEvent('domino-hand', { detail: detail }));
     },
 
     renderTiles: function (prevG) {
@@ -517,6 +555,7 @@
           if (want.role === 'chain' && prevG) SND.clack();
         }
       });
+      this.emitHand();
     },
 
     createTile: function (key, want) {
@@ -574,7 +613,7 @@
         if (w.kind === 'face') {
           var mat = faceMat(w.id);
           var hover = self.hoverKey === entry.key && w.clickable;
-          var glow = w.selected ? 0x4a4214 : w.legal ? (hover ? 0x3a3510 : 0x1f1c08) : hover ? 0x151515 : 0x000000;
+          var glow = w.selected ? 0x4a4214 : w.legal ? (hover ? 0x463f12 : 0x2e2a0c) : hover ? 0x151515 : 0x000000;
           mat.emissive.setHex(glow);
         }
       });
@@ -845,6 +884,7 @@
           var progress = g.format === 'competition' ? 'Compétition · manche ' + g.round + '/' + g.totalRounds : 'Manche ' + g.round + ' · objectif ' + g.targetScore + ' pts';
           hud.progress = progress + (g.mode === 'draw' ? ' · pioche : ' + g.boneyardCount : '');
           lines.push({ text: hud.progress, size: 42, color: '#cdbf9f' });
+          if (g.chain.length) hud.details = [endsText(g.chain)];
           if (g.turn === mySeat) {
             var hint = g.canDraw ? 'Aucun domino ne se pose : piochez.' : g.canPass ? 'Aucun domino ne se pose : vous passez dans ' + AUTO_PASS_S + ' s.' :
               g.chain.length === 0 && g.openingTile ? 'Ouvrez avec le ' + g.openingTile.replace('-', '|') + '.' : 'Choisissez un domino en surbrillance.';
