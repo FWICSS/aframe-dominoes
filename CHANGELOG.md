@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 1.0.1 (2026-10-17)
+
+- Passer à A-Frame 1.8.0, qui retire une dépendance vulnérable (alerte de sécurité modérée).
+- Corriger le service du moteur 3D, qui aurait cessé de se charger à la prochaine montée de version d'A-Frame.
+
 ## 1.0.0 (2026-10-12)
 
 Première version publiée : une partie de dominos complète, jouable à plusieurs en réalité virtuelle dans le navigateur.
