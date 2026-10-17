@@ -6,6 +6,7 @@ const { chooseAction } = require('./bot');
 const MAX_SEATS = 4;
 const BOT_DELAY_MS = 1400;
 const AFK_TAKEOVER_MS = 20000;
+const AUTO_PASS_MS = 2000; // joueur bloqué : on le prévient puis il passe tout seul
 const LOBBY_GRACE_MS = 30000;
 const EMOTE_COUNT = 6;
 const EMOTE_COOLDOWN_MS = 700;
@@ -21,7 +22,7 @@ function cleanPose(p) {
 }
 
 class Room {
-  constructor(code, { botDelay = BOT_DELAY_MS, afkTakeover = AFK_TAKEOVER_MS, rng = Math.random } = {}) {
+  constructor(code, { botDelay = BOT_DELAY_MS, afkTakeover = AFK_TAKEOVER_MS, autoPass = AUTO_PASS_MS, rng = Math.random } = {}) {
     this.code = code;
     this.members = new Map();
     this.seats = [];
@@ -30,6 +31,7 @@ class Room {
     this.game = null;
     this.botDelay = botDelay;
     this.afkTakeover = afkTakeover;
+    this.autoPass = autoPass;
     this.rng = rng;
     this.turnTimer = null;
     this.botCount = 0;
@@ -218,7 +220,7 @@ class Room {
     }
   }
 
-  // --- Tours automatiques (bots et joueurs absents) --------------------------
+  // --- Tours automatiques (bots, joueurs absents, joueurs bloqués) -----------
 
   scheduleTurn() {
     clearTimeout(this.turnTimer);
@@ -229,6 +231,7 @@ class Room {
     let delay;
     if (member.isBot) delay = this.botDelay;
     else if (!member.connected) delay = this.afkTakeover;
+    else if (this.game.canPass(seat)) delay = this.autoPass;
     else return;
     const round = this.game.round;
     this.turnTimer = setTimeout(() => {
