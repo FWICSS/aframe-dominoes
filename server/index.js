@@ -35,17 +35,29 @@ const ROOM_CODE = /^[A-Z0-9]{3,8}$/;
 const ROOM_IDLE_MS = 10 * 60 * 1000;
 
 // Serveurs STUN/TURN proposés aux navigateurs pour le chat vocal.
-// ICE_SERVERS='[{"urls":"turn:turn.exemple.fr:3478","username":"u","credential":"p"}]'
-function iceServers() {
-  const fallback = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
-  if (!process.env.ICE_SERVERS) return fallback;
-  try {
-    const list = JSON.parse(process.env.ICE_SERVERS);
-    if (Array.isArray(list) && list.length) return list;
-  } catch {
-    console.warn('ICE_SERVERS invalide (JSON attendu), STUN par défaut utilisé');
+// Relais TURN (coturn en use-auth-secret) : des identifiants valables 24 h sont signés
+// à chaque demande, le secret partagé ne quitte jamais le serveur.
+//   TURN_URLS='turn:turn.exemple.fr:3478,turn:turn.exemple.fr:3478?transport=tcp' TURN_SECRET=...
+// Liste complète imposée (prioritaire) :
+//   ICE_SERVERS='[{"urls":"turn:turn.exemple.fr:3478","username":"u","credential":"p"}]'
+const TURN_TTL_S = 24 * 3600;
+
+function iceServers(env = process.env, now = Date.now()) {
+  const list = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+  if (env.ICE_SERVERS) {
+    try {
+      const custom = JSON.parse(env.ICE_SERVERS);
+      if (Array.isArray(custom) && custom.length) return custom;
+    } catch {
+      console.warn('ICE_SERVERS invalide (JSON attendu), STUN par défaut utilisé');
+    }
   }
-  return fallback;
+  if (env.TURN_SECRET && env.TURN_URLS) {
+    const username = `${Math.floor(now / 1000) + TURN_TTL_S}:dominos`;
+    const credential = crypto.createHmac('sha1', env.TURN_SECRET).update(username).digest('base64');
+    list.push({ urls: env.TURN_URLS.split(',').map((u) => u.trim()).filter(Boolean), username, credential });
+  }
+  return list;
 }
 
 function serveStatic(req, res) {
@@ -174,4 +186,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createServer };
+module.exports = { createServer, iceServers };
