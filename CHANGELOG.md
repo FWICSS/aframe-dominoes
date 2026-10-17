@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 1.2.0 (2026-10-17)
+
+- Passer automatiquement le tour d'un joueur bloqué après 2 secondes, en le prévenant par un son et un bandeau orange.
+- Réorganiser l'écran hors VR : classement trié en haut à gauche, salle et micro en haut à droite, bandeau de tour en bas au centre, réactions en bas à gauche.
+- Agrandir les boutons (44 px minimum) et rendre l'interface lisible au clavier et par les lecteurs d'écran.
+
 ## 1.1.0 (2026-10-17)
 
 - Fournir un relais TURN au chat vocal avec des identifiants temporaires, pour que la voix passe aussi en 4G et sur les réseaux d'entreprise.

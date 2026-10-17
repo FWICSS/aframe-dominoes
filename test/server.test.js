@@ -184,3 +184,25 @@ test('identifiants TURN temporaires signés avec TURN_SECRET', () => {
   assert.equal(iceServers({}, now).some((s) => s.username), false, 'sans secret, pas de TURN');
   assert.deepEqual(iceServers({ ICE_SERVERS: '[{"urls":"stun:x"}]', TURN_SECRET: 's', TURN_URLS: 'turn:y' }, now), [{ urls: 'stun:x' }]);
 });
+
+test('un joueur bloqué passe automatiquement après le délai', async (t) => {
+  const { Room } = require('../server/room');
+  const room = new Room('BLOC', { botDelay: 1000, afkTakeover: 1000, autoPass: 30 });
+  t.after(() => room.dispose());
+  const socket = { readyState: 1, send() {}, close() {} };
+  room.join('alice', 'Alice', socket);
+  room.join('bob', 'Bob', { ...socket });
+  room.handle('alice', { t: 'settings', mode: 'block' });
+  room.handle('alice', { t: 'start' });
+
+  // Alice a la main mais aucun domino ne se pose sur le 6|6.
+  const g = room.game;
+  g.turn = 0;
+  g.chain = [{ id: '6-6', a: 6, b: 6 }];
+  g.seats[0].hand = [{ id: '0-1', a: 0, b: 1 }];
+  assert.ok(g.canPass(0));
+  room.scheduleTurn();
+
+  await waitFor(() => g.lastEvent.type === 'pass' && g.lastEvent.seat === 0);
+  assert.equal(g.turn, 1);
+});

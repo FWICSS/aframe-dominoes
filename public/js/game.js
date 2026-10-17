@@ -24,6 +24,8 @@
   var TOTAL_TILES = 28;
   // Réactions rapides (même ordre que côté serveur : on n'échange que l'index).
   var EMOTES = ['👍', '😂', 'Bien joué !', 'Oups !', 'À toi !', 'Hmm…'];
+  // Joueur bloqué : le serveur passe son tour après ce délai (AUTO_PASS_MS dans server/room.js).
+  var AUTO_PASS_S = 2;
 
   // --- Matériaux et maillages des dominos ------------------------------------
 
@@ -342,7 +344,9 @@
       var myTurnNow = this.isMyTurn();
       var wasMyTurn = !!prevG && prevG.phase === 'playing' && prevG.turn === prev.mySeat && prevG.round === g.round;
       if (myTurnNow && !wasMyTurn) {
-        SND.yourTurn();
+        // Bloqué : son d'alerte, le message est déjà dans le panneau et le bandeau.
+        if (g.canPass) SND.error();
+        else SND.yourTurn();
         this.pulse(0.4, 80);
       }
     },
@@ -811,35 +815,47 @@
       var comp = this.panel.components['ui-panel'];
       if (!comp || !comp.canvas) return;
       var lines = [];
+      // Même contenu, rangé pour l'interface HTML : classement, bandeau de tour, alerte.
+      var hud = { progress: null, title: null, hint: null, alert: false, details: [], scores: [] };
       var s = this.state;
       var gold = '#ffd166';
       if (!s) {
+        hud.title = 'Connexion au serveur…';
         lines.push({ text: 'Dominos VR', bold: true, size: 72, color: gold });
         lines.push('Connexion au serveur…');
       } else if (!s.game) {
         var seated = s.members.filter(function (m) { return m.seat >= 0; });
         var host = s.members.find(function (m) { return m.id === s.hostId; });
         lines.push({ text: 'Salle ' + s.room + ' — salle d\'attente', bold: true, size: 64, color: gold });
+        hud.title = 'Salle d\'attente';
         lines.push('À table (' + seated.length + '/4) : ' + seated.map(function (m) { return m.name; }).join(', '));
         lines.push('Mode : ' + (s.settings.mode === 'draw' ? 'avec pioche' : 'bloqué (sans pioche)') + ' · ' +
           (s.settings.format === 'competition' ? 'compétition en 12 manches, la pose tourne' : 'objectif ' + s.settings.targetScore + ' pts'));
-        lines.push(s.you === s.hostId
+        hud.hint = s.you === s.hostId
           ? (seated.length < 2 ? 'Invitez des amis ou ajoutez un bot, puis « Démarrer ».' : 'Prêt ? Appuyez sur « Démarrer » →')
-          : 'En attente de ' + (host ? host.name : 'l\'hôte') + ' pour démarrer…');
+          : 'En attente de ' + (host ? host.name : 'l\'hôte') + ' pour démarrer…';
+        hud.details = [lines[1], lines[2]];
+        hud.scores = seated.map(function (m) { return { name: m.name, me: m.id === s.you }; });
+        lines.push(hud.hint);
       } else {
         var g = s.game;
         var mySeat = s.mySeat;
         var names = g.seats.map(function (seat) { return seat.name; });
         if (g.phase === 'playing') {
           var progress = g.format === 'competition' ? 'Compétition · manche ' + g.round + '/' + g.totalRounds : 'Manche ' + g.round + ' · objectif ' + g.targetScore + ' pts';
-          lines.push({ text: progress + (g.mode === 'draw' ? ' · pioche : ' + g.boneyardCount : ''), size: 42, color: '#cdbf9f' });
+          hud.progress = progress + (g.mode === 'draw' ? ' · pioche : ' + g.boneyardCount : '');
+          lines.push({ text: hud.progress, size: 42, color: '#cdbf9f' });
           if (g.turn === mySeat) {
-            var hint = g.canDraw ? 'Aucun domino ne se pose : piochez.' : g.canPass ? 'Aucun coup possible : passez.' :
+            var hint = g.canDraw ? 'Aucun domino ne se pose : piochez.' : g.canPass ? 'Aucun domino ne se pose : vous passez dans ' + AUTO_PASS_S + ' s.' :
               g.chain.length === 0 && g.openingTile ? 'Ouvrez avec le ' + g.openingTile.replace('-', '|') + '.' : 'Choisissez un domino en surbrillance.';
             lines.push({ text: 'À vous de jouer !', bold: true, color: gold });
-            lines.push({ text: hint, color: gold, size: 46 });
+            lines.push({ text: hint, color: g.canPass ? '#ffb070' : gold, size: 46 });
+            hud.title = g.canPass ? 'Vous êtes bloqué' : 'À vous de jouer !';
+            hud.hint = hint;
+            hud.alert = !!g.canPass;
           } else {
             lines.push({ text: 'Au tour de ' + names[g.turn] + '…', bold: true });
+            hud.title = 'Au tour de ' + names[g.turn] + '…';
           }
         } else {
           var r = g.roundResult;
@@ -852,8 +868,11 @@
               bold: true, size: 64, color: gold,
             });
             lines.push({ text: title, size: 46 });
+            hud.title = lines[lines.length - 2].text;
+            hud.hint = title;
           } else {
             lines.push({ text: title, bold: true, color: gold });
+            hud.title = title;
           }
           // Détail du calcul : somme des points restant dans les mains adverses.
           if (r.winner != null) {
@@ -861,6 +880,7 @@
             r.totals.forEach(function (t, i) { if (i !== r.winner) parts.push(names[i] + ' ' + t); });
             lines.push({ text: 'Calcul : ' + parts.join(' + '), size: 42, color: '#cdbf9f' });
             lines.push({ text: '= ' + r.points + ' pts pour ' + names[r.winner], size: 42, color: '#cdbf9f' });
+            hud.details = ['Calcul : ' + parts.join(' + ') + ' = ' + r.points + ' pts'];
           }
         }
         g.seats.forEach(function (seat, i) {
@@ -870,14 +890,17 @@
             color: i === mySeat ? '#9fe0b0' : '#f5ecd8',
             size: 50,
           });
+          hud.scores.push({ name: seat.name, score: seat.score, extra: extra.replace(' · ', ''), me: i === mySeat, turn: i === g.turn && g.phase === 'playing' });
         });
+        // Classement : du plus haut score au plus bas.
+        hud.scores.sort(function (a, b) { return b.score - a.score; });
       }
       if (this.toastText && performance.now() < this.toastUntil) {
         lines.push({ text: this.toastText, color: this.toastError ? '#ff8a80' : '#9ad0ff', size: 48 });
       }
       comp.draw({ lines: lines, fontSize: 50, scale: 1.45, textAlign: 'left', align: 'top', background: 'rgba(24, 18, 12, 0.82)', border: '#8a6a3a', radius: 36 });
       // Même contenu pour l'interface HTML (ordinateur / mobile).
-      window.dispatchEvent(new CustomEvent('domino-panel', { detail: lines }));
+      window.dispatchEvent(new CustomEvent('domino-hud', { detail: hud }));
     },
 
     buttonList: function () {
