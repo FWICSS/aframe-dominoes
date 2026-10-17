@@ -14,8 +14,12 @@ const { WebSocketServer } = require('ws');
 const { Room } = require('./room');
 
 const ROOT = path.join(__dirname, '..', 'public');
+// Le nom du fichier distribué porte la version d'A-Frame : on le lit dans son package.json
+// pour qu'une montée de version ne casse pas le service du script.
+const AFRAME_DIR = path.join(__dirname, '..', 'node_modules', 'aframe');
+const AFRAME_VERSION = JSON.parse(fs.readFileSync(path.join(AFRAME_DIR, 'package.json'), 'utf8')).version;
 const VENDOR = {
-  '/vendor/aframe.min.js': path.join(__dirname, '..', 'node_modules', 'aframe', 'dist', 'aframe-v1.7.1.min.js'),
+  '/vendor/aframe.min.js': path.join(AFRAME_DIR, 'dist', `aframe-v${AFRAME_VERSION}.min.js`),
 };
 const MIME = {
   '.html': 'text/html; charset=utf-8',
