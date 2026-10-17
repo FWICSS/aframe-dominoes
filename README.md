@@ -37,7 +37,7 @@ Le WebXR n'est autorisé qu'en **HTTPS** (sauf sur `localhost`). Trois possibili
 1. **Héberger le jeu** sur un service qui fournit le HTTPS et les WebSockets (Render, Railway, Fly.io,
    un VPS…). C'est la solution idéale pour jouer avec des amis à distance. Un `render.yaml` permet de
    déployer en un clic sur Render (« New → Blueprint » avec ce dépôt) ; un `Dockerfile` est aussi fourni,
-   et la variable `PORT` est respectée.
+   et la variable `PORT` est respectée. Pour un VPS sous Coolify, voir [DEPLOY.md](DEPLOY.md).
 2. **Tunnel temporaire** depuis votre machine, par exemple `npx localtunnel --port 3000` ou
    `cloudflared tunnel --url http://localhost:3000`, puis ouvrez l'URL HTTPS obtenue dans le casque.
 3. **Réseau local avec certificat auto-signé** :
@@ -109,9 +109,14 @@ npm test      # règles, disposition de la chaîne, serveur multijoueur
 | `public/js/avatars.js`, `voice.js`, `net.js` | Avatars, chat vocal WebRTC, connexion au serveur |
 
 Le chat vocal passe en pair-à-pair via des serveurs STUN publics. Derrière certains réseaux
-(4G, entreprise…), il faut un relais TURN : indiquez-le au serveur avec la variable d'environnement
-`ICE_SERVERS`, par exemple
-`ICE_SERVERS='[{"urls":"turn:turn.exemple.fr:3478","username":"u","credential":"p"}]' npm start`.
+(4G, entreprise…), il faut un relais TURN. Avec un coturn configuré en `use-auth-secret`, le serveur
+signe des identifiants valables 24 h et le secret ne quitte jamais le serveur :
+
+```bash
+TURN_URLS='turn:turn.exemple.fr:3478' TURN_SECRET='même secret que coturn' npm start
+```
+
+La mise en production sur Coolify (jeu + coturn) est décrite dans [DEPLOY.md](DEPLOY.md).
 
 ## Licence
 

@@ -1,0 +1,35 @@
+# Relais TURN du chat vocal, à déployer dans Coolify comme ressource « Docker Compose ».
+# Variables à renseigner dans Coolify : TURN_SECRET (même valeur que côté jeu),
+# EXTERNAL_IP (IP publique du VPS), TURN_REALM (ex. turn.mondomaine.fr).
+# Réseau hôte : coturn doit publier directement 3478 et la plage de relais UDP.
+services:
+  coturn:
+    image: coturn/coturn:4.7.0
+    network_mode: host
+    restart: unless-stopped
+    command:
+      - -n
+      - --log-file=stdout
+      - --listening-port=3478
+      - --external-ip=${EXTERNAL_IP:?EXTERNAL_IP requis}
+      - --realm=${TURN_REALM:?TURN_REALM requis}
+      - --use-auth-secret
+      - --static-auth-secret=${TURN_SECRET:?TURN_SECRET requis}
+      - --min-port=49160
+      - --max-port=49200
+      - --fingerprint
+      - --no-cli
+      - --no-tls
+      - --no-dtls
+      - --no-multicast-peers
+      # Interdit de relayer vers le réseau interne du VPS (conteneurs, métadonnées, loopback).
+      - --denied-peer-ip=0.0.0.0-0.255.255.255
+      - --denied-peer-ip=10.0.0.0-10.255.255.255
+      - --denied-peer-ip=100.64.0.0-100.127.255.255
+      - --denied-peer-ip=127.0.0.0-127.255.255.255
+      - --denied-peer-ip=169.254.0.0-169.254.255.255
+      - --denied-peer-ip=172.16.0.0-172.31.255.255
+      - --denied-peer-ip=192.168.0.0-192.168.255.255
+      - --denied-peer-ip=::1
+      - --denied-peer-ip=fc00::-fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+      - --denied-peer-ip=fe80::-febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff
