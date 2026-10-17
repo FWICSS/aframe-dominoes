@@ -170,7 +170,11 @@
       var legal = d.myTurn && t.sides.length > 0;
       var btn = el('button', 'tile' + (legal ? ' legal' : ''));
       btn.type = 'button';
-      btn.innerHTML = '<span aria-hidden="true">' + t.label.replace('|', '<i></i>') + '</span>';
+      var halves = t.label.split('|');
+      var face = el('span');
+      face.setAttribute('aria-hidden', 'true');
+      face.append(halves[0], el('i'), halves[1]);
+      btn.appendChild(face);
       btn.setAttribute('aria-label', 'Domino ' + t.label.replace('|', ' et ') + (d.myTurn ? (legal ? ', jouable' : ', ne se pose pas') : ''));
       if (d.myTurn && !legal) btn.setAttribute('aria-disabled', 'true');
       btn.addEventListener('click', function () { game.onTileClick('T:' + t.id); });
