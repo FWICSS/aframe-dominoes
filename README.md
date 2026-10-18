@@ -110,6 +110,8 @@ npm test      # règles, disposition de la chaîne, serveur multijoueur
 | `public/js/world.js`, `textures.js` | Décor et textures générées (aucune image à télécharger) |
 | `public/js/avatars.js`, `voice.js`, `net.js` | Avatars, chat vocal WebRTC, connexion au serveur |
 
+Les messages échangés entre le navigateur et le serveur sont décrits dans [docs/PROTOCOLE.md](docs/PROTOCOLE.md).
+
 Le chat vocal passe en pair-à-pair via des serveurs STUN publics. Derrière certains réseaux
 (4G, entreprise…), il faut un relais TURN. Avec un coturn configuré en `use-auth-secret`, le serveur
 signe des identifiants valables 24 h et le secret ne quitte jamais le serveur :
