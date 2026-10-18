@@ -13,6 +13,7 @@
 
 ## Tests à faire à la main
 
+- [ ] **Téléphone** : premier essai fait le 18 octobre, retour à noter (modèle, navigateur, ce qui gêne) : barre « Ma main », disposition, regard au glisser, passage automatique, voix en Wi-Fi et en 4G.
 - [ ] **Casque VR (Quest)** : ouvrir https://dominos.tafrap.fr dans le navigateur du casque, entrer en VR, jouer aux manettes puis aux mains. Premier essai d'A-Frame 1.8 en VR.
 - [ ] **Lecteur d'écran** : VoiceOver (Cmd + F5 sur Mac) ou NVDA. Vérifier les annonces des coups, du tour et du blocage, et jouer une manche au clavier avec la barre « Ma main ».
 
