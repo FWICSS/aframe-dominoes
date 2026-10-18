@@ -23,7 +23,7 @@
 
 ## Organisation
 
-- [ ] **Passer le projet chez GIGA Games** (plan à valider avant tout déplacement) :
+- [ ] **Passer le projet chez GIGA Games**, si le président l'autorise (plan à valider avant tout déplacement) :
   - renommer le dépôt GitHub en `giga-dominos-vr` ;
   - déplacer le dossier de `~/Desktop/Dev/SAS/` vers `~/Desktop/Dev/Giga/` ;
   - vérifier que Coolify suit le renommage du dépôt.
@@ -31,10 +31,7 @@
 - [ ] Supprimer les branches locales déjà fusionnées (`git branch --merged master`).
 - [ ] Traiter les PR Renovate encore ouvertes (Node 24, `actions/checkout` et `actions/setup-node` en v7).
 
-## Documentation
-
-- [ ] Décrire le protocole WebSocket (messages client et serveur) pour les contributeurs.
-
 ## Promotion
 
-- [ ] **Vidéo en motion design** (Remotion), 30 à 40 s, en 16:9 et 9:16 : accroche, salon VR, prise en main, multijoueur, appel à l'action vers https://dominos.tafrap.fr.
+- [ ] **En attente** : décision du président sur la reprise du jeu par GIGA Games. Elle conditionne la marque, le nom du dépôt et l'URL à mettre dans la vidéo.
+- [ ] **Vidéo en motion design** (Remotion), 30 à 40 s, en 16:9 et 9:16 : accroche, salon VR, prise en main, multijoueur, appel à l'action vers le site.
