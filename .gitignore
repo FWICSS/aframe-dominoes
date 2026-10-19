@@ -4,3 +4,4 @@ npm-debug.log
 *.pem
 .env
 .idea
+graphify-out/
