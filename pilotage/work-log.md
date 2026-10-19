@@ -5,6 +5,16 @@
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
 
+## 2026-10-18 · Retrait des renvois de suivi en doublon
+- Agent : Claude Code · Décision de Dimitri Aigle du 2026-10-18 : `pilotage/` fait foi, les doublons sont supprimés.
+- Travaux : suppression de `todo.md` , qui ne contenaient plus qu'un renvoi vers `pilotage/` (contenu d'origine dans l'historique git).
+- Fichiers : `todo.md` 
+- Composants impactés : aucun (documentation)
+- Décisions : aucune nouvelle
+- Tests : aucun requis
+- Blocages : aucun
+- Reprise : inchangée, voir l'entrée précédente.
+
 ## 2026-10-18 · Mise en place du pilotage projet
 - Agent : Claude Code · Branche : `master` · Commits : base `dbcca15`, puis le commit `docs(pilotage): mise en place du pilotage projet`
 - Travaux : analyse du dépôt (manifeste, 30 derniers commits, tags, branches) ; graphe créé par `graphify extract . --code-only` (243 nœuds, 414 arêtes) ; hook graphify installé, attribut de fusion placé dans `.git/info/attributes` ; `graphify-out/` ajouté au `.gitignore` ; reprise intégrale de `todo.md` racine dans `pilotage/`, son corps remplacé par un renvoi d'une ligne (original dans l'historique git) ; écriture des huit fichiers.
