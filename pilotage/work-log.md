@@ -5,6 +5,11 @@
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
 
+## 2026-11-01 · Renovate économe en CI
+- Objectif : consigne de Dimitri, limiter le quota GitHub Actions.
+- Travaux : PR mensuelle unique pour mineures et correctifs, majeures sur validation dans le tableau de bord, 3 PR ouvertes au plus, rebase seulement en cas de conflit. Alertes de sécurité à tout moment.
+- Tests : `renovate-config-validator` local. Non poussé, en attente du push unique.
+
 ## 2026-11-01 · Version v1.3.1
 - Objectif : demande de Dimitri, « tag les versions ».
 - Travaux : manifeste, CHANGELOG et tag annoté `v1.3.1` alignés, en local.

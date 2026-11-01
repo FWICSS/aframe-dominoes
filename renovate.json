@@ -4,45 +4,69 @@
     ":dependencyDashboard",
     ":automergePatch"
   ],
-
   "baseBranchPatterns": [
     "master"
   ],
-
   "timezone": "America/Guadeloupe",
-
   "rangeStrategy": "bump",
-
   "packageRules": [
     {
-      "matchManagers": ["npm"],
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "npm dependencies"
     },
-
-   {
-
-      "matchUpdateTypes": ["patch"],
-
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
       "automerge": true
-
     },
-
     {
-
-      "matchPackageNames": ["node"],
-
+      "matchPackageNames": [
+        "node"
+      ],
       "automerge": false
-
     },
-
     {
-
       "automerge": false,
       "matchPackageNames": [
         "/webpack/",
         "/budo/",
         "/aframe/"
       ]
+    },
+    {
+      "description": "Quota CI : mineures et correctifs regroupés en une seule PR mensuelle.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "dependances mensuelles",
+      "groupSlug": "dependances-mensuelles"
+    },
+    {
+      "description": "Quota CI : une majeure n'ouvre de PR qu'après validation dans le tableau de bord.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true,
+      "automerge": false
     }
-  ]
+  ],
+  "schedule": [
+    "before 6am on the first day of the month"
+  ],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 1,
+  "rebaseWhen": "conflicted",
+  "vulnerabilityAlerts": {
+    "schedule": [
+      "at any time"
+    ],
+    "prConcurrentLimit": 0,
+    "prHourlyLimit": 0
+  }
 }
