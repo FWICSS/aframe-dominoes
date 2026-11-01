@@ -1,7 +1,7 @@
 {
   "name": "aframe-dominoes",
   "description": "Dominos en réalité virtuelle (WebXR / A-Frame), multijoueur entre amis",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "license": "MIT",
   "scripts": {
     "start": "node server/index.js",

@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 1.3.1 (2026-11-01)
+
+- Construire les dominos de la main sans `innerHTML`, sans changement visible.
+
 ## 1.3.0 (2026-10-17)
 
 - Jouer sans souris : la main s'affiche en boutons, utilisables au clavier, au lecteur d'écran et au doigt.

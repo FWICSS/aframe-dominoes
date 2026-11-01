@@ -5,6 +5,11 @@
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
 
+## 2026-11-01 · Version v1.3.1
+- Objectif : demande de Dimitri, « tag les versions ».
+- Travaux : manifeste, CHANGELOG et tag annoté `v1.3.1` alignés, en local.
+- Tests : aucun, lot de versionnage. Push en attente de validation.
+
 ## 2026-11-01 · État au 2026-11-01
 - Agent : assistant de pilotage · Branche : `master` · Commits : `docs(pilotage): etat au 2026-11-01`
 - Travaux : `pilotage/state.md` et `docs/CONTEXT.md` créés ; roadmap, TASK-003 et contrôles QC-011, QC-013, QC-014 mis à jour.

@@ -16,3 +16,5 @@ Sur validation :
 git pull --no-rebase origin master && git push origin master
 ```
 Puis déployer coturn et vérifier la voix en 4G (TASK-001).
+
+Version au 2026-11-01 : `v1.3.1`, tag local non poussé. Toute mention antérieure de version dans ce fichier est dépassée.
