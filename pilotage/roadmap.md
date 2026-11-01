@@ -1,6 +1,6 @@
 # Roadmap - Dominos VR (aframe-dominoes)
 
-> Rôle : direction, jalons et risques du projet. Mis à jour : 2026-10-18. Prochain identifiant libre : JAL-004.
+> Rôle : direction, jalons et risques du projet. Mis à jour : 2026-11-01. Prochain identifiant libre : JAL-004.
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
@@ -11,6 +11,12 @@ Sources : `README.md`, `CHANGELOG.md`, `DEPLOY.md`, `docs/PROTOCOLE.md`, ancien 
 Une vraie partie de dominos en réalité virtuelle, à jouer entre amis dans le navigateur : casque (Quest, Pico, PC VR), ordinateur ou mobile. Multijoueur de 2 à 4, chat vocal spatialisé, bots, règles arbitrées par le serveur. Logiciel libre sous licence MIT.
 
 ## État actuel
+Constat du 2026-11-01 (état court : `state.md`) :
+- `https://dominos.tafrap.fr` 200 et `config.json` sans entrée `turn:` [vérifié]. TASK-001 inchangée.
+- `master` distant en avance d'un commit sur le local (#29, `ws` 8.22.1) [vérifié par `gh api`]. CI verte sur ce commit, version de projet inchangée (montée de dépendance).
+- Sept PR Renovate ouvertes, toutes vertes, dont une depuis le 2026-05-22 (TASK-003).
+- Aucun retour de test consigné depuis le 2026-10-18. DEC-001 et DEC-002 toujours ouvertes.
+
 Constat du 2026-10-18 :
 - Version `1.3.0` concordante entre `package.json`, `CHANGELOG.md` et le tag `v1.3.0` (`b3b00cf`) [vérifié].
 - https://dominos.tafrap.fr répond 200 [vérifié par `curl -sI` le 2026-10-18] ; la version servie n'est pas lisible depuis l'extérieur.

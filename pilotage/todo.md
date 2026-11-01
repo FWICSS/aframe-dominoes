@@ -1,6 +1,6 @@
 # Todo - Dominos VR (aframe-dominoes)
 
-> Rôle : travail restant, une tâche par identifiant. Mis à jour : 2026-10-18. Prochain identifiant libre : TASK-013.
+> Rôle : travail restant, une tâche par identifiant. Mis à jour : 2026-11-01. Prochain identifiant libre : TASK-013.
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
@@ -72,7 +72,7 @@ Couverte par TASK-007.
 
 ### TASK-003 · Traiter les PR Renovate ouvertes
 - Priorité : P2 · Statut : `À faire`
-- Description : branches distantes `renovate/*` présentes (Node 24, `actions/checkout` et `actions/setup-node` en v7, coturn 4.x, dépendances npm) [vérifié par `git branch -a`].
+- Description : 7 PR ouvertes le 2026-11-01, toutes vertes [vérifié par `gh pr list`] : #11 Node 24.22.0 (2026-05-22), #12 `actions/checkout` v7 (2026-06-18), #13 `actions/setup-node` v7 (2026-07-14), #17 Node 24 (2026-10-12), #21 Node `>=20.20.2` (2026-10-17), #23 coturn 4.18.0 (2026-10-17), #28 Node 26 (2026-10-28). #29 (`ws`) est déjà fusionnée. [reco] #11, #17, #21 et #28 portent toutes sur Node : choisir la cible avant de fusionner.
 - Origine : todo.md ligne 33
 
 ### TASK-004 · Nettoyer les branches locales déjà fusionnées

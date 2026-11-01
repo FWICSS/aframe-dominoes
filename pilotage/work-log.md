@@ -1,9 +1,19 @@
 # Work-log - Dominos VR (aframe-dominoes)
 
-> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-10-18. Prochain identifiant libre : sans objet (entrées datées).
+> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-01. Prochain identifiant libre : sans objet (entrées datées).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
+
+## 2026-11-01 · État au 2026-11-01
+- Agent : assistant de pilotage · Branche : `master` · Commits : `docs(pilotage): etat au 2026-11-01`
+- Travaux : `pilotage/state.md` et `docs/CONTEXT.md` créés ; roadmap, TASK-003 et contrôles QC-011, QC-013, QC-014 mis à jour.
+- Fichiers : `pilotage/*`, `docs/CONTEXT.md`. Aucun code applicatif.
+- Composants impactés : aucun composant de code. `graphify update .` lancé.
+- Décisions : aucune
+- Tests : `curl` et `gh` du 2026-11-01 (voir `state.md`) ; `npm test` non relancé.
+- Blocages : aucun. Le `master` local est derrière le distant d'un commit, aucun `git fetch` lancé sur ce dépôt.
+- Reprise : fusion et push sur validation, TASK-003, puis TASK-001.
 
 ## 2026-10-18 · Retrait des renvois de suivi en doublon
 - Agent : Claude Code · Décision de Dimitri Aigle du 2026-10-18 : `pilotage/` fait foi, les doublons sont supprimés.
