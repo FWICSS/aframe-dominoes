@@ -1,10 +1,10 @@
 # Image de production : dépendances d'exécution seules, utilisateur non privilégié.
-FROM node:24.15.0-alpine AS deps
+FROM node:26.13.0-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
-FROM node:24.15.0-alpine
+FROM node:26.13.0-alpine
 ENV NODE_ENV=production PORT=3000
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
