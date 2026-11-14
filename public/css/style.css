@@ -51,6 +51,10 @@ h1 {
 h1 span { color: var(--gold); }
 
 .tagline { color: var(--muted); margin: 6px 0 20px; }
+/* Crédit du studio, en bas de l'écran d'accueil seulement : il disparaît avec lui en jeu. */
+.credit { margin: 16px 0 0; text-align: center; font-size: 0.85rem; }
+.credit a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+.credit a:hover, .credit a:focus-visible { color: inherit; }
 
 label {
   display: block;
