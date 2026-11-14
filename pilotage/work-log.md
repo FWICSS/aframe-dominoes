@@ -1,9 +1,16 @@
 # Work-log - Dominos VR (aframe-dominoes)
 
-> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-01. Prochain identifiant libre : sans objet (entrées datées).
+> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-14. Prochain identifiant libre : sans objet (entrées datées).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
+
+## 2026-11-14 · Dépendances vulnérables (veille de sécurité)
+- Agent : Claude Code · Branche : `fix/deps-securite-2026-11` (depuis `origin/master`) · Commit : `fix(deps): corrige les dépendances vulnérables (veille de sécurité)`
+- Objectif : demande de Dimitri, corriger les alertes de la veille de sécurité de l'admin TAFRAP.
+- Travaux : `follow-redirects` 1.16.1 → 1.16.3 (transitif d'aframe, GHSA-mrwp-f3q8-3g9p, `npm audit fix`) ; `ws` 8.22.2 → 8.23.0 ; image `node:24.15.0-alpine` → `node:24.22.3-alpine` (Dockerfile) et Node 24.22.3 en CI ; `coturn/coturn` 4.7.0 → 4.19.0.
+- Tests : `npm audit` 0 vulnérabilité `[vérifié]` ; `node --check` sur `server/*.js` et `public/js/*.js` sans erreur ; `npm test` 25/25 ; `docker build` réussi, `node --version` dans l'image v24.22.3 ; options coturn présentes dans `--help` de 4.19.0. Relais TURN non redéployé.
+- Reprise : push et PR sur validation de Dimitri ; vérifier le relais TURN après redéploiement Coolify.
 
 ## 2026-11-01 · Renovate économe en CI
 - Objectif : consigne de Dimitri, limiter le quota GitHub Actions.
