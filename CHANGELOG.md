@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 1.4.0 (2026-11-14)
+
+- Afficher « Réalisé par TAFRAP Studio » en bas de l'écran d'accueil, avec un lien vers tafrap.fr qui indique la provenance de la visite.
+
 ## 1.3.1 (2026-11-01)
 
 - Construire les dominos de la main sans `innerHTML`, sans changement visible.

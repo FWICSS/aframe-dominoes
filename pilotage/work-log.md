@@ -5,6 +5,14 @@
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
 
+## 2026-11-14 · Crédit TAFRAP Studio sur l'écran d'accueil (v1.4.0)
+- Agent : Claude Code · Branche : `feat/credit-tafrap`
+- Objectif : demande de Dimitri, crédit « Réalisé par TAFRAP Studio » sur ses sites en ligne (relevé dans `TAFRAP/tafrap/pilotage/marketing/CREDITS_REALISATIONS.md`).
+- Travaux : lien en bas de la carte d'accueil vers `https://tafrap.fr/?utm_source=dominos.tafrap.fr&utm_medium=credit&utm_campaign=realisations`, nouvel onglet annoncé aux lecteurs d'écran ; masqué en jeu avec l'écran d'accueil.
+- Tests : `npm test` 25/25 ; page servie en local avec le crédit (`curl`).
+- Composants impactés : `public/index.html`, `public/css/style.css`.
+- Reste : pousser la branche et déployer (Dimitri).
+
 ## 2026-11-01 · Renovate économe en CI
 - Objectif : consigne de Dimitri, limiter le quota GitHub Actions.
 - Travaux : PR mensuelle unique pour mineures et correctifs, majeures sur validation dans le tableau de bord, 3 PR ouvertes au plus, rebase seulement en cas de conflit. Alertes de sécurité à tout moment.
