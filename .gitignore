@@ -5,3 +5,5 @@ npm-debug.log
 .env
 .idea
 graphify-out/
+.env.*
+!.env.example
