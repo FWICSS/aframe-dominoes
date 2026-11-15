@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 1.4.1 (2026-11-15)
+
+- Le crédit de l'écran d'accueil dit « Conçu et développé par TAFRAP Studio », le même libellé que sur les autres sites du studio, et mène à `https://tafrap.fr/?ref=dominos`.
+
 ## 1.4.0 (2026-11-14)
 
 - Afficher « Réalisé par TAFRAP Studio » en bas de l'écran d'accueil, avec un lien vers tafrap.fr qui indique la provenance de la visite.

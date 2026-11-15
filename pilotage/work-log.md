@@ -1,9 +1,15 @@
 # Work-log - Dominos VR (aframe-dominoes)
 
-> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-14. Prochain identifiant libre : sans objet (entrées datées).
+> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-15. Prochain identifiant libre : sans objet (entrées datées).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
+
+## 2026-11-15 · Crédit TAFRAP Studio : libellé commun et lien en `?ref=dominos` (v1.4.1)
+- Agent : Claude Code, sur décision de Dim (TASK-054 du dépôt tafrap) · Dépôt recloné depuis GitHub (passage par `~/Desktop/_sas`, puis `~/Desktop/Dev/Projet/aframe-dominoes`) · Branche `feat/credit-tafrap` reprise, `origin/master` fusionnée dedans (merge, sans réécriture).
+- Travaux : lien du crédit de `public/index.html` vers `https://tafrap.fr/?ref=dominos`, texte « Conçu et développé par TAFRAP Studio » (annonce « s'ouvre dans un nouvel onglet » gardée pour les lecteurs d'écran) ; nouveau `test/credit.test.js` ; `.env.*` ajouté au `.gitignore`.
+- Tests : `npm ci`, `node --check` sur `server/*.js` et `public/js/*.js` sans erreur, `npm test` 27/27, page servie en local avec le crédit [vérifié].
+- Reprise : PR vers `master` (v1.4.0 et v1.4.1), redéploiement Coolify, constat sur dominos.tafrap.fr.
 
 ## 2026-11-14 · Crédit TAFRAP Studio sur l'écran d'accueil (v1.4.0)
 - Agent : Claude Code · Branche : `feat/credit-tafrap`
