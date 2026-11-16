@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 1.4.2 (2026-11-16)
+
+- Un lien partagé vers le jeu affiche un aperçu : capture d'une partie, nom et promesse du jeu (WhatsApp, LinkedIn, Facebook, X).
+- L'onglet du navigateur et l'écran d'accueil du téléphone affichent une icône en forme de domino.
+
 ## 1.4.1 (2026-11-15)
 
 - Le crédit de l'écran d'accueil dit « Conçu et développé par TAFRAP Studio », le même libellé que sur les autres sites du studio, et mène à `https://tafrap.fr/?ref=dominos`.
