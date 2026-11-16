@@ -1,6 +1,6 @@
 # Checklist qualité - Dominos VR (aframe-dominoes)
 
-> Rôle : contrôles adaptés à la stack (Node.js sans build, `ws`, A-Frame 1.8, WebRTC, Docker, Coolify). Mis à jour : 2026-10-18. Prochain identifiant libre : QC-016.
+> Rôle : contrôles adaptés à la stack (Node.js sans build, `ws`, A-Frame 1.8, WebRTC, Docker, Coolify). Mis à jour : 2026-10-18. Prochain identifiant libre : QC-017.
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
@@ -28,5 +28,6 @@ Statuts : `À faire`, `Réussi`, `Échec`, `Non applicable`, `Non vérifié`. `R
 | QC-013 | Disponibilité du site | `curl -sI https://dominos.tafrap.fr` | Réussi | 2026-11-01, 200 |
 | QC-014 | Relais TURN publié | `curl -s https://dominos.tafrap.fr/config.json` contient `turn:` avec `username` | Échec | 2026-11-01, aucune entrée `turn:` (TASK-001) |
 | QC-015 | Build, déploiement et retour arrière | image `Dockerfile` en build pack Dockerfile, conteneur « healthy », section « Revenir en arrière » de `DEPLOY.md` | Non vérifié | TASK-002 |
+| QC-016 | Aperçu de partage et favicon en ligne | `curl -sL https://dominos.tafrap.fr \| grep -c og:image` (attendu 1) ; `curl -sI https://dominos.tafrap.fr/og-image.jpg` 200 ; LinkedIn Post Inspector | Non vérifié | 2026-11-16, 0 en ligne avant déploiement de v1.4.2 ; 1 en local |
 
 Aucun déploiement en production n'a été lancé pour cocher une case.
