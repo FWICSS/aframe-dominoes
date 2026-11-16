@@ -38,7 +38,7 @@ Tous les jalons sont non datés.
 | Fonctionnalité | Priorité | Jalon | Statut |
 |---|---|---|---|
 | Relais TURN coturn en production | P1 | JAL-001 | À faire |
-| Image de partage et favicon | P2 | JAL-002 | À faire |
+| Image de partage et favicon | P2 | JAL-002 | À vérifier (v1.4.2, non déployée) |
 | Vidéo de présentation en motion design | P2 | JAL-003 | Bloqué |
 
 ## Risques et blocages

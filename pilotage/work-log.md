@@ -1,9 +1,17 @@
 # Work-log - Dominos VR (aframe-dominoes)
 
-> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-15. Prochain identifiant libre : sans objet (entrées datées).
+> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-16. Prochain identifiant libre : sans objet (entrées datées).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
+
+## 2026-11-16 · Favicon, image de partage et balises Open Graph (TASK-009, v1.4.2)
+- Agent : Claude Code, sur demande de Dimitri · Worktree `aframe-dominoes-worktrees/fix-partage-favicon`, branche `fix/partage-favicon` depuis `origin/master` (`b364b7b`, PR #32 fusionnée) · Commit : `fix(seo): ajoute favicon, image de partage et balises Open Graph`.
+- Cause : `public/index.html` n'avait ni `og:image` ni `rel="icon"` ; `curl -sL https://dominos.tafrap.fr | grep -c og:image` = 0, `/favicon.ico` en 404 le 2026-11-16 [vérifié].
+- Travaux : `public/favicon.ico` (16, 32, 48), `public/favicon.svg` et `public/apple-touch-icon.png` (180 px, fond `#1a1410`), dessinés d'après un domino du jeu (ivoire, points noirs) ; `public/og-image.jpg` 1200x630, capture réelle d'une manche contre trois bots (Playwright sur le serveur local), avec le nom et la promesse de l'écran d'accueil, sans mention de la voix ; balises `og:*` et `twitter:*` (`summary_large_image`, image en URL absolue) ; `test/partage.test.js`. Pas de logo TAFRAP sur l'image : le crédit reste textuel sur l'accueil.
+- Composants : `public/index.html`, `public/` (fichiers statiques servis par `server/index.js`, types MIME déjà présents). Graphe graphify absent du dépôt.
+- Tests : `npm test` 30/30, `node --check` sans erreur ; HTML servi en local (`PORT=3917`) : 16 balises `og:`/`twitter:`, trois `rel="icon|apple-touch-icon"` ; `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `og-image.jpg` en 200 avec le bon type [vérifié].
+- Reprise : push et redéploiement Coolify sur validation de Dimitri, puis contrôler l'aperçu dans WhatsApp ou LinkedIn (Post Inspector) pour clore TASK-009 (QC-016).
 
 ## 2026-11-15 · Crédit TAFRAP Studio : libellé commun et lien en `?ref=dominos` (v1.4.1)
 - Agent : Claude Code, sur décision de Dim (TASK-054 du dépôt tafrap) · Dépôt recloné depuis GitHub (passage par `~/Desktop/_sas`, puis `~/Desktop/Dev/Projet/aframe-dominoes`) · Branche `feat/credit-tafrap` reprise, `origin/master` fusionnée dedans (merge, sans réécriture).

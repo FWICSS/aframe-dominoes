@@ -10,10 +10,11 @@ Les numéros de ligne d'origine renvoient à `todo.md` racine au commit `dbcca15
 ## Fonctionnalités
 
 ### TASK-009 · Ajouter une image de partage et un favicon
-- Priorité : P2 · Statut : `À faire` · Jalon : JAL-002
+- Priorité : P2 · Statut : `À vérifier` · Jalon : JAL-002
+- Avancement 2026-11-16 : favicon, `og-image.jpg` et balises Open Graph et Twitter ajoutés sur `fix/partage-favicon` (v1.4.2), présents dans le HTML servi en local [vérifié]. Manque : déploiement et contrôle de l'aperçu réel (QC-016).
 - Description : l'aperçu d'un lien partagé sur LinkedIn ou WhatsApp est vide. `public/index.html` ne contient ni `og:image` ni icône [vérifié le 2026-10-18].
 - Critères d'acceptation :
-  - [ ] `og:image` et favicon présents dans le HTML servi
+  - [x] `og:image` et favicon présents dans le HTML servi (local, 2026-11-16)
   - [ ] Aperçu non vide dans un partage WhatsApp ou LinkedIn
 - Origine : todo.md ligne 23
 
