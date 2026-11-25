@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 1.5.0 (2026-11-25)
+
+- Une page « Mentions légales et données », liée depuis l'écran d'accueil, présente l'éditeur et l'hébergeur (TAFRAP Studio) et explique ce que deviennent le prénom, les réglages gardés dans le navigateur et la voix.
+
 ## 1.4.2 (2026-11-16)
 
 - Un lien partagé vers le jeu affiche un aperçu : capture d'une partie, nom et promesse du jeu (WhatsApp, LinkedIn, Facebook, X).
