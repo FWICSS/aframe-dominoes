@@ -1,6 +1,6 @@
 # Todo - Dominos VR (aframe-dominoes)
 
-> Rôle : travail restant, une tâche par identifiant. Mis à jour : 2026-11-01. Prochain identifiant libre : TASK-013.
+> Rôle : travail restant, une tâche par identifiant. Mis à jour : 2026-11-25. Prochain identifiant libre : TASK-014.
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
@@ -11,12 +11,21 @@ Les numéros de ligne d'origine renvoient à `todo.md` racine au commit `dbcca15
 
 ### TASK-009 · Ajouter une image de partage et un favicon
 - Priorité : P2 · Statut : `À vérifier` · Jalon : JAL-002
+- Avancement 2026-11-25 : en production, `og:image` = `https://dominos.tafrap.fr/og-image.jpg` dans le HTML servi, image et `/favicon.ico` en 200 (curl) [vérifié]. Reste l'aperçu réel dans LinkedIn ou WhatsApp (QC-016).
 - Avancement 2026-11-16 : favicon, `og-image.jpg` et balises Open Graph et Twitter ajoutés sur `fix/partage-favicon` (v1.4.2), présents dans le HTML servi en local [vérifié]. Manque : déploiement et contrôle de l'aperçu réel (QC-016).
 - Description : l'aperçu d'un lien partagé sur LinkedIn ou WhatsApp est vide. `public/index.html` ne contient ni `og:image` ni icône [vérifié le 2026-10-18].
 - Critères d'acceptation :
   - [x] `og:image` et favicon présents dans le HTML servi (local, 2026-11-16)
   - [ ] Aperçu non vide dans un partage WhatsApp ou LinkedIn
 - Origine : todo.md ligne 23
+
+### TASK-013 · Publier une page de mentions légales
+- Priorité : P0 · Statut : `En cours` (code fait le 2026-11-25 sur `feat/mentions-legales`, reste le déploiement) · Jalon : JAL-002
+- Description : le site demande un prénom et l'accès au micro sans aucune page de mentions légales (obligation LCEN, article 6) ; `/mentions-legales` en 404 le 2026-11-24 [vérifié]. Éditeur : DEC-005.
+- Critères d'acceptation :
+  - [x] `public/mentions-legales.html` : éditeur, hébergeur, données traitées (prénom, stockage local, micro, STUN), lien depuis le formulaire d'accueil, `test/mentions.test.js` vert
+  - [ ] `https://dominos.tafrap.fr/mentions-legales.html` en 200 en production
+- Origine : session vitrines du 2026-11-24, post PRJ-2612-08 du 29/12.
 
 ### TASK-012 · Réaliser la vidéo en motion design
 - Priorité : P2 · Statut : `Bloquée` (DEC-001) · Jalon : JAL-003

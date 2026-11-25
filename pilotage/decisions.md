@@ -1,11 +1,17 @@
 # Décisions - Dominos VR (aframe-dominoes)
 
-> Rôle : décisions prises, avec leur justification. Mis à jour : 2026-10-18. Prochain identifiant libre : DEC-005 (numérotation commune avec pending-decision.md).
+> Rôle : décisions prises, avec leur justification. Mis à jour : 2026-11-25. Prochain identifiant libre : DEC-006 (numérotation commune avec pending-decision.md).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
 
 Décisions reconstituées depuis le code et la documentation, consignées le 2026-10-18.
+
+## DEC-005 · TAFRAP Studio édite le jeu tant que DEC-001 n'est pas tranchée · 2026-11-24 · `acceptée`
+- Décidé par : Dimitri Aigle, session vitrines du 2026-11-24.
+- Contexte : le site demande un prénom et l'accès au micro sans mentions légales ; la reprise par GIGA Games (DEC-001) attend le président, et le post PRJ-2612-08 sort le 29/12.
+- Décision : mentions légales au nom de TAFRAP Studio (éditeur et hébergeur) et URL `dominos.tafrap.fr` dans le post. Si GIGA Games reprend le jeu, éditeur et URL changent à ce moment-là.
+- Conséquences : TASK-013 réalisable ; DEC-001 reste ouverte.
 
 ## DEC-003 · Règles arbitrées par le serveur, chaque joueur ne reçoit que sa main · 2026-10-12 · `acceptée`
 - Décidé par : Dimitri Aigle [à confirmer]

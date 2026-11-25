@@ -1,6 +1,6 @@
 # Décisions en attente - Dominos VR (aframe-dominoes)
 
-> Rôle : arbitrages ouverts, l'agent recommande, il ne tranche pas. Mis à jour : 2026-10-18. Prochain identifiant libre : DEC-005 (numérotation commune avec decisions.md).
+> Rôle : arbitrages ouverts, l'agent recommande, il ne tranche pas. Mis à jour : 2026-11-25. Prochain identifiant libre : DEC-006 (numérotation commune avec decisions.md).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.

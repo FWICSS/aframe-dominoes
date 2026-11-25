@@ -1,9 +1,16 @@
 # Work-log - Dominos VR (aframe-dominoes)
 
-> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-16. Prochain identifiant libre : sans objet (entrées datées).
+> Rôle : chronologie des interventions, la plus récente en tête. Mis à jour : 2026-11-25. Prochain identifiant libre : sans objet (entrées datées).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
+
+## 2026-11-25 · Page de mentions légales (TASK-013, DEC-005, v1.5.0)
+- Agent : Claude Code, session vitrines · Worktree `aframe-dominoes-worktrees/mentions-legales`, branche `feat/mentions-legales` depuis `origin/master` (`3677580`).
+- Travaux : `public/mentions-legales.html` (éditeur et hébergeur TAFRAP Studio depuis `tafrap-policy`, données traitées relevées dans le code : prénom transmis par WebSocket et gardé en mémoire le temps de la partie, `localStorage` `dominoes.name` et `dominoes.mic`, `sessionStorage` `dominoes.clientId`, voix WebRTC pair à pair avec STUN Google, ni cookie ni mesure d'audience) ; lien « Mentions légales et données » sous le crédit du formulaire d'accueil (`public/index.html`, `.credit.legal` dans `style.css`) ; `test/mentions.test.js` (contenu, lien, service HTTP).
+- Tests : `npm test` 34/34 [vérifié].
+- Constat : en production, `og:image` et favicon en 200 (TASK-009, curl du 2026-11-25).
+- Reprise : push, PR, déploiement Coolify, curl de `/mentions-legales.html`.
 
 ## 2026-11-16 · Favicon, image de partage et balises Open Graph (TASK-009, v1.4.2)
 - Agent : Claude Code, sur demande de Dimitri · Worktree `aframe-dominoes-worktrees/fix-partage-favicon`, branche `fix/partage-favicon` depuis `origin/master` (`b364b7b`, PR #32 fusionnée) · Commit : `fix(seo): ajoute favicon, image de partage et balises Open Graph`.

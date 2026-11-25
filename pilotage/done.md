@@ -1,6 +1,6 @@
 # Done - Dominos VR (aframe-dominoes)
 
-> Rôle : réalisations vérifiées, chacune avec sa preuve. Mis à jour : 2026-10-18. Prochain identifiant libre : TASK-013 (numérotation commune avec todo.md).
+> Rôle : réalisations vérifiées, chacune avec sa preuve. Mis à jour : 2026-11-25. Prochain identifiant libre : TASK-014 (numérotation commune avec todo.md).
 > Voir aussi : roadmap.md · todo.md · done.md · work-log.md · pending-decision.md · decisions.md · bugs.md · quality-checklist.md
 
 Légende : `[vérifié]` constaté dans le code, git ou une sortie de commande ; `[à confirmer]` repris d'un document sans preuve ; `[hypothèse]` déduction de l'agent ; `[reco]` recommandation de l'agent.
